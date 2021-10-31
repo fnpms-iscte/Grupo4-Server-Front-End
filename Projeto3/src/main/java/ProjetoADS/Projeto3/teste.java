@@ -77,6 +77,7 @@ public class teste {
 			ObjectMapper mapper = new ObjectMapper();
 			String JSONOutput = mapper.writeValueAsString(studentsList);
 			System.out.println(JSONOutput);
+			System.out.println(studentsList );
 
 		} catch (SQLException e) {
 			e.printStackTrace();
