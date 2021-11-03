@@ -71,21 +71,31 @@ class Lecture {
 	get too_many_students_room_exam() {
 		return this.too_many_students_room_exam;
 	}
-	set too_many_students_room_exam(boolean) {
-		this.too_many_students_room_exam = boolean;
+	
+	/**
+	 * @param {Boolean} bool
+	 */
+	set too_many_students_room_exam(bool) {
+		this.too_many_students_room_exam = bool;
 	}
 
 	get too_many_students_room() {
 		return this.too_many_students_room;
 	}
-	set too_many_students_room(boolean) {
-		this.too_many_students_room = boolean;
+	/**
+	 * @param {Boolean} bool
+	 */
+	set too_many_students_room(bool) {
+		this.too_many_students_room = bool;
 	}
 
 	get room() {
 		return this.room;
 	}
 
+	/**
+	 * @param {Room} room
+	 */
 	set room(room) {
 		this.room = room;
 	}
