@@ -1,0 +1,33 @@
+body {
+    background: #ff000091;
+    min-height: 100vh;
+    overflow-y: hidden;
+    padding: 15px 15px 15px;
+}
+
+.footer{      
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+}
+
+.upload-btn {
+    margin-top: 15px;
+}
+
+.wrapper{
+    width: 50%;
+    background: white;
+    padding: 40px;
+    border-radius: 25px;
+}
+
+.lecture{
+    margin-top: 15px;
+}
+
+.rooms{
+    margin-top: 15px;
+}
