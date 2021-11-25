@@ -5,18 +5,21 @@
 
 <body>
 	
+	
 	<div class="mb-3 wrapper">
-		<div class="rooms">
-			<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
-			<input class="form-control" type="file" id="formFile">
-		</div>
-		<div class="lecture">
-			<h2><label for="formFile" class="form-label">Lecture csv:</label></h2>
-			<input class="form-control" type="file" id="formFile">	
-		</div>
-		<div class="upload-div">
-			<button type="button" class="btn btn-primary upload-btn">Upload</button>
-		</div>
+		<form action="/teste" method="POST">
+			<div class="rooms">
+				<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
+				<input class="form-control" type="file" accept=".csv" id="formFile" required>
+			</div>
+			<div class="lecture">
+				<h2><label for="formFile" class="form-label">Lectures csv:</label></h2>
+				<input class="form-control" type="file" accept=".csv" id="formFile" required>	
+			</div>
+			<div class="upload-div">
+				<button type="submit" class="btn btn-primary upload-btn">Upload</button>
+			</div>
+		</form>
 	</div>
 
 	

@@ -18,6 +18,11 @@ app.get('/resultados', (req,res) => {
     res.render('index', { title: '| Resultados'} );
 });
 
+/*app.post('/teste', (req,res)=>{
+    console.log(req.body.rooms)
+
+});*/
+
 app.use((req, res) => {
     res.render('404', { title: '| 404 Error'} );
 });
