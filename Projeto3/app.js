@@ -11,7 +11,11 @@ app.use(express.static('global'));
 app.use(express.json());
 
 app.set('view engine', 'ejs');
-app.listen(port)
+
+app.listen(port, function(err){
+    if (err) console.log("Error in server setup")
+    console.log("Server listening on Port: ", port);
+})
 
 app.get('/', (req,res) => {
     res.render('index', { title: ''} );
