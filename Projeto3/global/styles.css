@@ -1,8 +1,11 @@
 body {
     background: #ff000091;
     min-height: 100vh;
-    overflow-y: hidden;
+    /*overflow-y: hidden;*/
     padding: 15px 15px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .footer{      
@@ -15,6 +18,7 @@ body {
 
 .upload-btn {
     margin-top: 15px;
+    width: 20%;
 }
 
 .wrapper{
@@ -30,4 +34,10 @@ body {
 
 .rooms{
     margin-top: 15px;
+}
+
+.upload-div{
+    margin-top: 15px;
+    text-align: center;
+   
 }
