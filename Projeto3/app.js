@@ -2,9 +2,13 @@ const express = require('express');
 
 const app = express();
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
+
 const port =  process.env.port || 3000
 
 app.use(express.static('global'));
+app.use(express.json());
 
 app.set('view engine', 'ejs');
 app.listen(port)
@@ -16,6 +20,14 @@ app.get('/', (req,res) => {
 app.get('/resultados', (req,res) => {
     console.log(req)
     res.render('index', { title: '| Resultados'} );
+});
+
+app.post('/', upload.array("files"), (req,res) => {
+    console.log("Tentei fazer post");
+    console.log(req.body);
+    //console.log(req.files);
+    console.log(req.files);
+    res.json({ message: "Successfully uploaded files" });
 });
 
 /*app.post('/teste', (req,res)=>{

@@ -7,19 +7,20 @@
 	
 	
 	<div class="mb-3 wrapper">
-		<form action="/teste" method="POST">
+		<form action="/" method="POST" id='form'>
 			<div class="rooms">
 				<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
-				<input class="form-control" type="file" accept=".csv" id="formFile" required>
+				<input class="form-control" type="file" id="formFileRoom" required>
 			</div>
 			<div class="lecture">
 				<h2><label for="formFile" class="form-label">Lectures csv:</label></h2>
-				<input class="form-control" type="file" accept=".csv" id="formFile" required>	
+				<input class="form-control" type="file" id="formFileLecture" required>	
 			</div>
 			<div class="upload-div">
 				<button type="submit" class="btn btn-primary upload-btn">Upload</button>
 			</div>
 		</form>
+		<script type="text/javascript" src="/send-file-script.js"></script>
 	</div>
 
 	
