@@ -1,7 +1,6 @@
 body {
     background: #ff000091;
     min-height: 100vh;
-    /*overflow-y: hidden;*/
     padding: 15px 15px 15px;
     display: flex;
     align-items: center;
@@ -36,7 +35,7 @@ body {
     margin-top: 15px;
 }
 
-.upload-div{
+.upload{
     margin-top: 15px;
     text-align: center;
    

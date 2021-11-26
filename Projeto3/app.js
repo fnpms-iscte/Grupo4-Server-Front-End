@@ -34,11 +34,6 @@ app.post('/', upload.array("files"), (req,res) => {
     res.json({ message: "Successfully uploaded files" });
 });
 
-/*app.post('/teste', (req,res)=>{
-    console.log(req.body.rooms)
-
-});*/
-
 app.use((req, res) => {
     res.render('404', { title: '| 404 Error'} );
 });
