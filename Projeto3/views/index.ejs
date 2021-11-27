@@ -1,21 +1,19 @@
 <!DOCTYPE html>
 <html>
 <%- include('./partials/header.ejs') %>
-
-
 <body>
 		
 	<div class="mb-3 wrapper">
 		<form action="/" method="post" id='form'>
 			<div class="rooms">
 				<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
-				<input class="form-control" type="file" id="formFileRoom" required>
+				<input class="form-control" type="file" id="formFileRoom" accept=".csv" required>
 			</div>
 			<div class="lecture">
 				<h2><label for="formFile" class="form-label">Lectures csv:</label></h2>
-				<input class="form-control" type="file" id="formFileLecture" required>	
+				<input class="form-control" type="file" id="formFileLecture" accept=".csv" required>	
 			</div>
-			<div class="upload-div">
+			<div class="upload">
 				<button type="submit" class="btn btn-primary upload-btn">Upload</button>
 			</div>
 		</form>
@@ -38,11 +36,6 @@
 			}
 		</script>
 	</div>
-
-	
-
-
-	
 	<%- include('./partials/footer.ejs') %>	
 </body>
 </html>
