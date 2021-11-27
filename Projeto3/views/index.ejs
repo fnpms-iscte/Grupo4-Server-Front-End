@@ -4,10 +4,9 @@
 
 
 <body>
-	
-	
+		
 	<div class="mb-3 wrapper">
-		<form action="/" method="POST" id='form'>
+		<form action="/" method="post" id='form'>
 			<div class="rooms">
 				<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
 				<input class="form-control" type="file" id="formFileRoom" required>
@@ -20,7 +19,24 @@
 				<button type="submit" class="btn btn-primary upload-btn">Upload</button>
 			</div>
 		</form>
-		<script type="text/javascript" src="/send-file-script.js"></script>
+		<script>
+			const form = document.getElementById("form");
+			form.addEventListener("submit", submitForm);
+			function submitForm(e) {
+				e.preventDefault();
+				const fileRoom    = document.getElementById("formFileRoom");
+				const fileLecture = document.getElementById("formFileLecture");
+				const formData    = new FormData();
+				formData.append("files", fileRoom.files[0]);
+				formData.append("files", fileLecture.files[0]);
+				const options = {
+					method: 'post',
+					body: formData
+				}
+				fetch('/', options);
+				location.href = '/success';
+			}
+		</script>
 	</div>
 
 	
