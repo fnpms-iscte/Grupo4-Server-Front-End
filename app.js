@@ -1,21 +1,38 @@
+const http = require('http');
+const socketio =  require('socket.io');
 const express = require('express');
+const multer = require("multer");
+const formatRequest = require('./utils/request');
 
 const app = express();
-
-const multer = require("multer");
+const server = http.createServer(app)
+const io = socketio(server);
 const upload = multer({ dest: "uploads/" });
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+} = require('./utils/users');
 
-const port =  process.env.PORT || 3000
+const PORT =  process.env.PORT || 3000
 
 app.use(express.static('global'));
 app.use(express.json());
 
 app.set('view engine', 'ejs');
 
-app.listen(port, function(err){
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Run when client connects
+io.on('connection', socket => {
+    console.log('New WS connection ...');
+    socket.emit('message','Welcome to ISCTE')
+});
+
+/*app.listen(port, function(err){
     if (err) console.log("Error in server setup")
     console.log("Server listening on Port: ", port);
-})
+})*/
 
 app.get('/', (req,res) => {
     res.render('index', { title: ''} );
@@ -43,6 +60,6 @@ app.post('/', upload.array("files"), (req,res) => {
     //res.redirect('/success')
 });
 
-app.use((req, res) => {
+/*app.use((req, res) => {
     res.render('404', { title: '| 404 Error'} );
-});
+});*/
