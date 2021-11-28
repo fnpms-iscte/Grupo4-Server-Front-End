@@ -21,17 +21,26 @@ app.get('/', (req,res) => {
     res.render('index', { title: ''} );
 });
 
-app.get('/resultados', (req,res) => {
-    console.log(req)
-    res.render('index', { title: '| Resultados'} );
-});
+app.get('/success', (req,res) => {
+    res.render('success', { title: 'Resultados do Horário'} );
+    // um await aqui para só enviar o file quando estiver pronto
+    // const file = 
+    // res.download(file)
+  })
+  
 
 app.post('/', upload.array("files"), (req,res) => {
-    console.log("Tentei fazer post");
+    console.log("POST Done");
     console.log(req.body);
-    //console.log(req.files);
     console.log(req.files);
-    res.json({ message: "Successfully uploaded files" });
+    // file está na pasta uploads e usar como fifo aka fazer um script para manipular
+   
+    var filenames = req.files.map(function(file) {
+        return file.originalname
+      });
+
+    console.log("File names are",filenames);
+    //res.redirect('/success')
 });
 
 app.use((req, res) => {
