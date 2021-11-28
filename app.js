@@ -5,7 +5,7 @@ const app = express();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
 
-const port =  process.env.PORT
+const port =  process.env.PORT || 3000
 
 app.use(express.static('global'));
 app.use(express.json());
