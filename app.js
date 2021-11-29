@@ -26,7 +26,7 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // Run when client connects
 io.on('connection', socket => {
     console.log('New WS connection ...');
-    socket.emit('message','Welcome to ISCTE')
+    socket.emit('message','Welcome to ISCTE');
 });
 
 /*app.listen(port, function(err){
@@ -35,17 +35,17 @@ io.on('connection', socket => {
 })*/
 
 app.get('/', (req,res) => {
-    res.render('index', { title: ''} );
+  res.render('index', { title: ''} );
 });
-
+/*
 app.get('/success', (req,res) => {
     res.render('success', { title: 'Resultados do Horário'} );
     // um await aqui para só enviar o file quando estiver pronto
     // const file = 
     // res.download(file)
   })
-  
-
+  */
+/*
 app.post('/', upload.array("files"), (req,res) => {
     console.log("POST Done");
     console.log(req.body);
@@ -58,8 +58,10 @@ app.post('/', upload.array("files"), (req,res) => {
 
     console.log("File names are",filenames);
     //res.redirect('/success')
-});
+});*/
 
 /*app.use((req, res) => {
     res.render('404', { title: '| 404 Error'} );
 });*/
+
+
