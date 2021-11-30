@@ -19,7 +19,6 @@ function submitForm(e) {
     formData.append("files", fileLecture.files[0]);
     
     socket.emit('filesSent', "formData");
-    socket.
     /*const options = {
         method: 'post',
         body: formData
