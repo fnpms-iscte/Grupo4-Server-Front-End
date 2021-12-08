@@ -1,6 +1,8 @@
 const socket = io();
 const uploadFiles = document.getElementById("uploadFiles-form");
 
+var uploader = new SocketIOFileUpload(socket);
+
 function csvJSON(csv){
 
     var lines=csv.split("\n");
@@ -42,14 +44,17 @@ function submitForm(e) {
     const fileLecture = document.getElementById("formFileLecture");
     console.log(fileRoom.files[0]);
     console.log(fileLecture.files[0]);
-    const formData = new FormData();
-    formData.append("files", fileRoom.files[0]);
-    formData.append("files", fileLecture.files[0]);
-    console.log("XXXXXXXXXXX Files sent",formData);
+    let files_array = [
+        fileRoom.files[0],
+        fileLecture.files[0]
+    ]
+    console.log("XXXXXXXXXXX Files sent",files_array);
     
-    body = {
-        rooms_file : "TEsteastaetasfaf",
-        lectures_file : 2
+    uploader.submitFiles(files_array);
+
+    body = { 
+        id: socket.id,
+        files: uploader,
     }
 
     socket.emit('filesSent', body);

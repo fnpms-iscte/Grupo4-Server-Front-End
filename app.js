@@ -2,9 +2,13 @@ const http = require('http');
 const socketio =  require('socket.io');
 const express = require('express');
 const multer = require("multer");
+const siofu = require("socketio-file-upload");
 const formatRequest = require('./utils/request');
 
 const app = express();
+
+app.use(siofu.router)
+
 const server = http.createServer(app)
 const io = socketio(server);
 const upload = multer({ dest: "uploads/" });
@@ -25,13 +29,17 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Run when client connects
 io.on('connection', socket => {
+
+  var uploader = new siofu();
+  uploader.dir = "C:/Users/hugoa/OneDrive/Ambiente de Trabalho/Uni/Mestrado/ads/projeto_ads_git/Projeto_ADS/uploads";
+  uploader.listen(socket);
   console.log('New WS connection ...');
   socket.emit('message','Welcome to ISCTE');
 
   socket.on('filesSent', body =>{
 
-      console.log("Ficheiros rebidos",body.rooms_file);
-      
+      console.log("Ficheiros recebidos",body.files);
+
       socket.emit('message','Files received - Server');
   });
 
