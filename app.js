@@ -25,18 +25,38 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Run when client connects
 io.on('connection', socket => {
-    console.log('New WS connection ...');
-    socket.emit('message','Welcome to ISCTE');
+  console.log('New WS connection ...');
+  socket.emit('message','Welcome to ISCTE');
+
+  socket.on('filesSent', body =>{
+
+      console.log("Ficheiros rebidos",body.rooms_file);
+      
+      socket.emit('message','Files received - Server');
+  });
+
+
+
+
+
+
+
+
+
+
+
 });
+
+app.get('/', (req,res) => {
+  res.render('index', { title: ''} );
+});
+
 
 /*app.listen(port, function(err){
     if (err) console.log("Error in server setup")
     console.log("Server listening on Port: ", port);
 })*/
 
-app.get('/', (req,res) => {
-  res.render('index', { title: ''} );
-});
 /*
 app.get('/success', (req,res) => {
     res.render('success', { title: 'Resultados do Horário'} );
@@ -63,5 +83,3 @@ app.post('/', upload.array("files"), (req,res) => {
 /*app.use((req, res) => {
     res.render('404', { title: '| 404 Error'} );
 });*/
-
-
