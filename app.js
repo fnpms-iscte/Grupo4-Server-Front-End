@@ -1,9 +1,12 @@
 const http = require('http');
+const csvjson = require('csvjson');
 const socketio =  require('socket.io');
 const express = require('express');
 const multer = require("multer");
 const siofu = require("socketio-file-upload");
 const formatRequest = require('./utils/request');
+const fs = require('fs');
+
 
 const workers = []
 const users = []
@@ -19,6 +22,7 @@ const {
   getCurrentUser,
   userLeave,
 } = require('./utils/users');
+const { get, result } = require('lodash');
 
 const PORT =  process.env.PORT || 3000
 
@@ -56,11 +60,35 @@ io.on('connection', socket => {
 
   socket.on('filesSent', body =>{
 
-      console.log("Ficheiros recebidos",body.files);
+      console.log("Ficheiros recebidos",body);
 
       socket.emit('message','Files received - Server');
 
-      socket.to(workers[0]).emit('files_to_handle',body);
+      //socket.to(workers[0]).emit('files_to_handle',body);
+
+      var files = fs.readdirSync('./uploads');
+      console.log("Files sent:", files)
+      var array_files = []
+      let jsonObj;
+      fs.readFile('./uploads/ADS - Caracterizacao das salas-8.csv', 'utf-8', (err, fileContent) => {
+        if(err) {
+            console.log(err); // Do something to handle the error or just throw it
+            throw new Error(err);
+        }
+
+        var options = {
+          delimiter : ';'
+        };
+
+        jsonObj = csvjson.toObject(fileContent,options);
+        //console.log("T-----",jsonObj);
+
+        
+        
+      });
+
+    
+
   });
 
   socket.on('disconnect', () => {
@@ -108,3 +136,77 @@ app.post('/', upload.array("files"), (req,res) => {
     console.log("File names are",filenames);
     //res.redirect('/success')
 });*/
+
+
+function csvJSON(csv){
+
+  csv = fs.readFileSync(csv)
+  var array = csv.toString().split("\r");
+  let result = [];
+  let headers = array[0].split(";")
+
+  for (let i = 1; i < array.length - 1; i++) {
+    let obj = {}
+    let str = array[i]
+    let s = ''
+   
+    // By Default, we get the comma separated
+    // values of a cell in quotes " " so we
+    // use flag to keep track of quotes and
+    // split the string accordingly
+    // If we encounter opening quote (")
+    // then we keep commas as it is otherwise
+    // we replace them with pipe |
+    // We keep adding the characters we
+    // traverse to a String s
+    let flag = 0
+    for (let ch of str) {
+      if (ch === '"' && flag === 0) {
+        flag = 1
+      }
+      else if (ch === '"' && flag == 1) flag = 0
+      if (ch === ', ' && flag === 0) ch = '|'
+      if (ch !== '"') s += ch
+    }
+   
+    // Split the string using pipe delimiter |
+    // and store the values in a properties array
+    let properties = s.split("|")
+   
+    // For each header, if the value contains
+    // multiple comma separated data, then we
+    // store it in the form of array otherwise
+    // directly the value is stored
+    for (let j in headers) {
+      if (properties[j].includes(", ")) {
+        obj[headers[j]] = properties[j]
+          .split(", ").map(item => item.trim())
+      }
+      else obj[headers[j]] = properties[j]
+    }
+   
+    // Add the generated object to our
+    // result array
+    result.push(obj)
+  }
+   
+  // Convert the resultant array to json and
+  // generate the JSON output file.
+  let json = JSON.stringify(result);
+  fs.writeFileSync('output.json', json);
+
+}
+
+function getFiles (){
+  const files_ =  [];
+  var files = fs.readdirSync("./uploads");
+  for (var i in files){
+      var name = dir + '/' + files[i];
+      if (fs.statSync(name).isDirectory()){
+          getFiles(name, files_);
+      } else {
+          files_.push(name);
+      }
+  }
+  return files_;
+}

@@ -36,9 +36,9 @@ function submitForm(e) {
         method: 'post',
         body: formData
     }*/
-    fetch('/', options)
+   /* fetch('/', )
         .then((res) => console.log(res))
         .catch((err) => ("Error occured", err));
-    location.href = '/success';
+    location.href = '/success';*/
 }                                                                                                       
 
