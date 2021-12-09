@@ -16,7 +16,7 @@ function csvJSON(csv){
     var headers=lines[0].split(",");
   
     for(var i=1;i<lines.length;i++){
-  
+
         var obj = {};
         var currentline=lines[i].split(",");
   
