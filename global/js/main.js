@@ -4,6 +4,7 @@ const uploadFiles = document.getElementById("uploadFiles-form");
 var uploader = new SocketIOFileUpload(socket);
 
 
+socket.emit('user', )
 
 socket.on('message', message =>{
     console.log(message)

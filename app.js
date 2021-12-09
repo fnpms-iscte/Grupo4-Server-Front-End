@@ -32,21 +32,22 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 // Run when client connects
 io.on('connection', socket => {
 
-  users.push(socket.id)
-
   var uploader = new siofu();
   uploader.dir = "./uploads";
   uploader.listen(socket);
-  console.log('New WS connection ...');
+  //console.log('New WS connection ...');
   socket.emit('message','Welcome to ISCTE');
 
-  socket.on('worker', token  =>{
+  socket.on('user' , ()=>{
+      users.push(socket.id)
+     console.log("\nNew User registed with id:",socket.id, "\nUsers:", users.length )
+  })
 
+  socket.on('worker', token  =>{
     if (token == 659812) {
       workers.push(socket.id)
-      console.log("Worker add with token:",token,"\nSocket id :",socket.id)
-      socket.to(users[0]).emit('message', 'Worker avaible');
-      socket.broadcast.emit('message', "Workers disponiveis: 1")
+      console.log("\nNew Worker registed with id:",socket.id,"\nWorkers:",workers.length)
+      socket.to(users).emit('message', 'Worker avaible');
     }
 
 
@@ -61,6 +62,21 @@ io.on('connection', socket => {
 
       socket.to(workers[0]).emit('files_to_handle',body);
   });
+
+  socket.on('disconnect', () => {
+      const index = users.indexOf(socket.id) ;
+      if (index > -1) {
+        users.splice(index, 1);
+        console.log("\nUser disconnected \nUsers:",users.length)
+      }else{
+        const index = workers.indexOf(socket.id) ;
+        if (index > -1) {
+          workers.splice(index, 1);
+          console.log("\nWorker disconnected \nWorkers:",workers.length)
+
+        }
+      }
+  })
 });
 
 app.get('/', (req,res) => {
