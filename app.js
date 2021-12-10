@@ -16,13 +16,13 @@ app.use(siofu.router)
 
 const server = http.createServer(app)
 const io = socketio(server);
-const upload = multer({ dest: "uploads/" });
+/*const upload = multer({ dest: "uploads/" });
 const {
   userJoin,
   getCurrentUser,
   userLeave,
 } = require('./utils/users');
-const { get, result } = require('lodash');
+const { get, result } = require('lodash');*/
 
 const PORT =  process.env.PORT || 3000
 
@@ -43,8 +43,9 @@ io.on('connection', socket => {
   socket.emit('message','Welcome to ISCTE');
 
   socket.on('user' , ()=>{
-      users.push(socket.id)
+     users.push(socket.id)
      console.log("\nNew User registed with id:",socket.id, "\nUsers:", users.length )
+     socket.emit('user-id', socket.id)
   })
 
   socket.on('worker', token  =>{
@@ -53,9 +54,6 @@ io.on('connection', socket => {
       console.log("\nNew Worker registed with id:",socket.id,"\nWorkers:",workers.length)
       socket.to(users).emit('message', 'Worker avaible');
     }
-
-
-
   });
 
   socket.on('filesSent', body =>{
@@ -66,26 +64,18 @@ io.on('connection', socket => {
 
       //socket.to(workers[0]).emit('files_to_handle',body);
 
-      var files = fs.readdirSync('./uploads');
-      console.log("Files sent:", files)
-      var array_files = []
-      let jsonObj;
-      fs.readFile('./uploads/ADS - Caracterizacao das salas-8.csv', 'utf-8', (err, fileContent) => {
-        if(err) {
-            console.log(err); // Do something to handle the error or just throw it
-            throw new Error(err);
-        }
+      /*var files = fs.readdirSync('./uploads');
+      console.log("Files sent:", uploader)
+      var array_files = []*/
+      
+      
+      // csv to json and send it to worker
+      csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms', 'utf-8',);
+      csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures', 'utf-8',);
+      var json_aux = csv_to_json(csv_content1,csv_content2);
+      socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
+      console.log(json_aux[0],"\n\n",json_aux[1])
 
-        var options = {
-          delimiter : ';'
-        };
-
-        jsonObj = csvjson.toObject(fileContent,options);
-        //console.log("T-----",jsonObj);
-
-        
-        
-      });
 
     
 
@@ -95,12 +85,12 @@ io.on('connection', socket => {
       const index = users.indexOf(socket.id) ;
       if (index > -1) {
         users.splice(index, 1);
-        console.log("\nUser disconnected \nUsers:",users.length)
+        console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
       }else{
         const index = workers.indexOf(socket.id) ;
         if (index > -1) {
           workers.splice(index, 1);
-          console.log("\nWorker disconnected \nWorkers:",workers.length)
+          console.log("\nWorker with id",socket.id, "disconnected \nWorkers:",workers.length)
 
         }
       }
@@ -138,63 +128,16 @@ app.post('/', upload.array("files"), (req,res) => {
 });*/
 
 
-function csvJSON(csv){
+function csv_to_json(fileContent1,fileContent2){
 
-  csv = fs.readFileSync(csv)
-  var array = csv.toString().split("\r");
-  let result = [];
-  let headers = array[0].split(";")
+  var options = {
+    delimiter : ';'
+  };
+  jsonObj1 = csvjson.toObject(fileContent1,options);
+  jsonObj2 = csvjson.toObject(fileContent2,options);
 
-  for (let i = 1; i < array.length - 1; i++) {
-    let obj = {}
-    let str = array[i]
-    let s = ''
-   
-    // By Default, we get the comma separated
-    // values of a cell in quotes " " so we
-    // use flag to keep track of quotes and
-    // split the string accordingly
-    // If we encounter opening quote (")
-    // then we keep commas as it is otherwise
-    // we replace them with pipe |
-    // We keep adding the characters we
-    // traverse to a String s
-    let flag = 0
-    for (let ch of str) {
-      if (ch === '"' && flag === 0) {
-        flag = 1
-      }
-      else if (ch === '"' && flag == 1) flag = 0
-      if (ch === ', ' && flag === 0) ch = '|'
-      if (ch !== '"') s += ch
-    }
-   
-    // Split the string using pipe delimiter |
-    // and store the values in a properties array
-    let properties = s.split("|")
-   
-    // For each header, if the value contains
-    // multiple comma separated data, then we
-    // store it in the form of array otherwise
-    // directly the value is stored
-    for (let j in headers) {
-      if (properties[j].includes(", ")) {
-        obj[headers[j]] = properties[j]
-          .split(", ").map(item => item.trim())
-      }
-      else obj[headers[j]] = properties[j]
-    }
-   
-    // Add the generated object to our
-    // result array
-    result.push(obj)
-  }
-   
-  // Convert the resultant array to json and
-  // generate the JSON output file.
-  let json = JSON.stringify(result);
-  fs.writeFileSync('output.json', json);
-
+  var jsonObjs = [jsonObj1,jsonObj2];
+  return jsonObjs
 }
 
 function getFiles (){
