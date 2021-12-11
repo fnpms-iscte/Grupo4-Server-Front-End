@@ -68,17 +68,15 @@ io.on('connection', socket => {
       console.log("Files sent:", uploader)
       var array_files = []*/
       
-      
-      // csv to json and send it to worker
-      csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms', 'utf-8',);
-      csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures', 'utf-8',);
-      var json_aux = csv_to_json(csv_content1,csv_content2);
-      socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
-      console.log(json_aux[0],"\n\n",json_aux[1])
-
-
-    
-
+      uploader.on("saved", function(event){
+        let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms', 'utf-8',);
+        let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures', 'utf-8',);
+        var json_aux = csv_to_json(csv_content1,csv_content2);
+        socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
+        console.log(json_aux[0],"\n\n",json_aux[1]);
+        console.log(workers[0])
+        //remove files (remember note)
+      });
   });
 
   socket.on('disconnect', () => {
@@ -133,11 +131,9 @@ function csv_to_json(fileContent1,fileContent2){
   var options = {
     delimiter : ';'
   };
-  jsonObj1 = csvjson.toObject(fileContent1,options);
-  jsonObj2 = csvjson.toObject(fileContent2,options);
-
-  var jsonObjs = [jsonObj1,jsonObj2];
-  return jsonObjs
+  let jsonObj1 = csvjson.toObject(fileContent1,options);
+  let jsonObj2 = csvjson.toObject(fileContent2,options);
+  return [jsonObj1,jsonObj2];
 }
 
 function getFiles (){
