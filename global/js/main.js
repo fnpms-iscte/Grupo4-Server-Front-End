@@ -3,7 +3,11 @@ const uploadFiles = document.getElementById("uploadFiles-form");
 var uploader = new SocketIOFileUpload(socket);
 let id
 
-socket.emit('user', )
+socket.on('welcome', message=>{
+    console.log(message,id)
+    socket.emit('user', )
+} )
+
 socket.on('user-id', socketid =>{
     console.log("My id is:",socketid)
     id = socketid;
@@ -34,13 +38,8 @@ function submitForm(e) {
     
     uploader.submitFiles(files_array);
 
-    body = { 
-        id: socket.id,
-        files: uploader,
-    }
-
-    socket.emit('filesSent', body);
-    /*const options = {
+    socket.emit('message', 'send json');
+    /*/*const options = {
         method: 'post',
         body: formData
     }*/
