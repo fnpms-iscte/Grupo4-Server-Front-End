@@ -53,10 +53,15 @@ io.on('connection', socket => {
   });
 
   uploader.on("saved", function(event){
-    let csv_content = fs.readFileSync('./uploads/'+event.file.name, 'utf-8',);
-    let json_aux = csv_to_json(csv_content);
-    socket.to(workers[0]).emit('files_to_handle',{file : json_aux, name : event.file.name, id: socket.id});
-    fs.unlinkSync('./uploads/'+event.file.name)
+    console.log(event.file.name, "Uploaded")
+    if(event.file.name == (socket.id+"_lectures")){
+      let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms', 'utf-8',);
+      let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures', 'utf-8',);
+      var json_aux = csv_to_json(csv_content1,csv_content2);
+      socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures')
+    }
     
   });
 
@@ -69,10 +74,9 @@ io.on('connection', socket => {
     var index = users.findIndex(function(user, i){
       return user.id === val
     });
-
     users[index].files = JSON.parse(body).horarios
 
-    socket.to(val).emit('results')
+    socket.to(val).emit('results',val)
   });
   
 
@@ -114,7 +118,7 @@ app.use((req, res) => {
 
 app.post('/',  (req,res) => {
     console.log("POST Done");
-    console.log(req.body);
+    console.log(req);
     // file está na pasta uploads e usar como fifo aka fazer um script para manipular
    
     //var filenames = req.files.map(function(file) {
@@ -124,13 +128,14 @@ app.post('/',  (req,res) => {
 });/**/
 
 
-function csv_to_json(fileContent){
+function csv_to_json(fileContent1, fileContent2){
 
   var options = {
     delimiter : ';'
   };
-  let jsonObj = csvjson.toObject(fileContent,options);
-  return jsonObj;
+  let jsonObj1 = csvjson.toObject(fileContent1,options);
+  let jsonObj2 = csvjson.toObject(fileContent2,options);
+  return [jsonObj1,jsonObj2];
 }
 
 function getFiles (){

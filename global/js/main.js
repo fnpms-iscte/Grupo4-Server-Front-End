@@ -17,7 +17,13 @@ socket.on('message', message =>{
     console.log(message,id)
 });
 
-socket.on('results' , () =>{
+socket.on('results' , (id_antigo) =>{
+    console.log(id_antigo)
+    const options = {
+        method: 'post',
+        body: id_antigo
+    }
+    fetch('/', options);
     location.href = '/success';
 });
 
@@ -43,13 +49,6 @@ function submitForm(e) {
     uploader.submitFiles(files_array);
 
     socket.emit('message', 'send json');
-    /*/*const options = {
-        method: 'post',
-        body: formData
-    }*/
-   /* fetch('/', )
-        .then((res) => console.log(res))
-        .catch((err) => ("Error occured", err));
-    location.href = '/success';*/
+    //location.href = '/success';
 }                                                                                                       
 
