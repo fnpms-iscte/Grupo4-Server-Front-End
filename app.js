@@ -29,7 +29,8 @@ io.on('connection', socket => {
   socket.emit('welcome','Welcome to ISCTE');
 
   socket.on('user' , ()=>{
-     users.push(socket.id)
+     users.push({id : socket.id, files : {}})
+     
      console.log("\nNew User registed with id:",socket.id, "\nUsers:", users.length )
      socket.emit('user-id', socket.id)
   })
@@ -44,14 +45,18 @@ io.on('connection', socket => {
 
   socket.on('message', message=> {
     console.log(message)
+
+    if (message == 'send json') {
+      console.log("hi there")
+      socket.to(workers[0]).emit('message', "envia res")
+    }
   });
 
   uploader.on("saved", function(event){
     let csv_content = fs.readFileSync('./uploads/'+event.file.name, 'utf-8',);
     let json_aux = csv_to_json(csv_content);
     socket.to(workers[0]).emit('files_to_handle',{file : json_aux, name : event.file.name, id: socket.id});
-    console.log(json_aux);
-    //remove files (remember note)*/
+    fs.unlinkSync('./uploads/'+event.file.name)
     
   });
 
@@ -60,13 +65,23 @@ io.on('connection', socket => {
   });
 
   socket.on('results', body =>{
-    console.log("I'm here\n\n", JSON.parse(body).horarios)
-    socket.to(users[0]).emit('message','Resultados enviados')
+    var val = JSON.parse(body).id_client
+    var index = users.findIndex(function(user, i){
+      return user.id === val
+    });
+
+    users[index].files = JSON.parse(body).horarios
+
+    socket.to(val).emit('results')
   });
   
 
   socket.on('disconnect', () => {
-      const index = users.indexOf(socket.id) ;
+      var val = socket.id
+      var index = users.findIndex(function(user, i){
+        return user.id === val
+      });
+
       if (index > -1) {
         users.splice(index, 1);
         console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
@@ -96,20 +111,17 @@ app.use((req, res) => {
   res.render('404', { title: '| 404 Error'} );
 });
 
-/*
-app.post('/', upload.array("files"), (req,res) => {
+
+app.post('/',  (req,res) => {
     console.log("POST Done");
     console.log(req.body);
-    console.log(req.files);
     // file está na pasta uploads e usar como fifo aka fazer um script para manipular
    
-    var filenames = req.files.map(function(file) {
-        return file.originalname
-      });
-
-    console.log("File names are",filenames);
+    //var filenames = req.files.map(function(file) {
+    //    return file.originalname
+     // });
     //res.redirect('/success')
-});*/
+});/**/
 
 
 function csv_to_json(fileContent){

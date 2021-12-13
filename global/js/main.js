@@ -17,6 +17,10 @@ socket.on('message', message =>{
     console.log(message,id)
 });
 
+socket.on('results' , () =>{
+    location.href = '/success';
+});
+
 uploadFiles.addEventListener("submit", submitForm);
 
 function submitForm(e) {
