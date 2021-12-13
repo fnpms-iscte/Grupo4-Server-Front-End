@@ -105,28 +105,22 @@ app.get('/', (req,res) => {
 });
 
 app.get('/success', (req,res) => {
-  res.render('success', { title: 'Resultados do Horário'} );
+  console.log("success")
+  return res.render('success', { title: 'Resultados do Horário'} );
   // um await aqui para só enviar o file quando estiver pronto
   // const file = 
   // res.download(file)
 })
 
+app.post('/success',  (req,res) => {
+  console.log("POST Done");
+  console.log(req.body);
+  res.render('success', { title: 'Resultados do Horário'} );
+});
+
 app.use((req, res) => {
   res.render('404', { title: '| 404 Error'} );
 });
-
-
-app.post('/',  (req,res) => {
-    console.log("POST Done");
-    console.log(req);
-    // file está na pasta uploads e usar como fifo aka fazer um script para manipular
-   
-    //var filenames = req.files.map(function(file) {
-    //    return file.originalname
-     // });
-    //res.redirect('/success')
-});/**/
-
 
 function csv_to_json(fileContent1, fileContent2){
 

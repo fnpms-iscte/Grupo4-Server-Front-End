@@ -17,14 +17,19 @@ socket.on('message', message =>{
     console.log(message,id)
 });
 
-socket.on('results' , (id_antigo) =>{
+socket.on('results' , async (id_antigo) =>{
     console.log(id_antigo)
+    const data = {id_antigo};
     const options = {
-        method: 'post',
-        body: id_antigo
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
     }
+    console.log(options);
     fetch('/', options);
-    location.href = '/success';
+    //location.href = '/success';
 });
 
 uploadFiles.addEventListener("submit", submitForm);
