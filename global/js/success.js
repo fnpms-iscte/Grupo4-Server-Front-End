@@ -1,19 +1,15 @@
 const socket = io();
 let old_id
+let id
 
 socket.on('welcome', message=>{
     console.log(message,id)
     socket.emit('user', )
 } )
 
-socket.on('welcome', message=>{
-    console.log(message,id)
-    socket.emit('user', )
-} )
-
-socket.on('old-user-id', oldsocketid =>{
-    console.log("My old id is:",oldsocketid)
-    old_id = oldsocketid;
+socket.on('old-user-id', old_socketid =>{
+    console.log("My old id is:",old_socketid)
+    old_id = old_socketid;
 })
 
 socket.on('user-id', socketid =>{

@@ -20,12 +20,9 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-
 app.use(express.urlencoded({ 
   extended: true
 }))
-
-
 
 // Run when client connects
 io.on('connection', socket => {
@@ -87,7 +84,7 @@ io.on('connection', socket => {
     });
     users[index].files = JSON.parse(body).horarios
 
-    socket.to(id).emit('results',id)
+    socket.to(id).emit('results')
   });
   
 
@@ -98,8 +95,8 @@ io.on('connection', socket => {
       });
 
       if (index > -1) {
-        users.splice(index, 1);
-        console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
+        //users.splice(index, 1);
+        //console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
       }else{
         const index = workers.indexOf(socket.id) ;
         if (index > -1) {

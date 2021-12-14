@@ -1,161 +1,51 @@
 <!DOCTYPE html>
  <html>
    <head>
-      <meta charset="ISO-8859-1">
-	   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-      <title>Projeto ADS</title>
-	   <link href="https://unpkg.com/tabulator-tables@5.0.7/dist/css/tabulator.min.css" rel="stylesheet">
-      <script type="text/javascript" src="https://unpkg.com/tabulator-tables@5.0.7/dist/js/tabulator.min.js"></script>
-   </head>
+    <%- include('./partials/header.ejs') %>
+    <link rel="stylesheet" href="/styles_success.css">
+    </head>
 
-   <div>
-      <input type="button" class="btn btn-dark" value="Go back!"  onclick="history.back()"></button>
-      <button id="download-csv">Download CSV</button>
-      <button id="download-json">Download JSON</button>
-   </div>
-
+   
 
 <body>
-   <div id="players"></div>
-   <script type="text/javascript">
-      var tabledata = [{
-                playerid: 1,
-                playername: "Virat Kohli",
-                price: "17",
-                team: "RCB",
-                joiningdate: "01/01/2020"
-            }, {
-                playerid: 2,
-                playername: "Rohit Sharma",
-                price: "15",
-                team: "MI",
-                joiningdate: "02/01/2020"
-            }, {
-                playerid: 3,
-                playername: "MS Dhoni",
-                price: "15",
-                team: "CSK",
-                joiningdate: "03/01/2020"
-            }, {
-                playerid: 4,
-                playername: "Shreyas Iyer",
-                price: "7",
-                team: "RCB",
-                joiningdate: "04/01/2020"
-            }, {
-                playerid: 5,
-                playername: "KL Rahul",
-                price: "11",
-                team: "KXIP",
-                joiningdate: "05/01/2020"
-            }, {
-                playerid: 6,
-                playername: "Dinesh Karthik",
-                price: "7",
-                team: "KKR",
-                joiningdate: "06/01/2020"
-            }, {
-                playerid: 7,
-                playername: "Steve Smith",
-                price: "12",
-                team: "RR",
-                joiningdate: "07/01/2020"
-            }, {
-                playerid: 8,
-                playername: "David Warner",
-                price: "12",
-                team: "SRH",
-                joiningdate: "08/01/2020"
-            }, {
-                playerid: 9,
-                playername: "Kane Williamson",
-                price: "3",
-                team: "SRH",
-                joiningdate: "09/01/2020"
-            }, {
-                playerid: 10,
-                playername: "Jofra Archer",
-                price: "7",
-                team: "RR",
-                joiningdate: "10/01/2020"
-            }, {
-                playerid: 11,
-                playername: "Andre Russell",
-                price: "9",
-                team: "KKR",
-                joiningdate: "11/01/2020"
-            }, {
-                playerid: 12,
-                playername: "Chris Gayle",
-                price: "2",
-                team: "KXIP",
-                joiningdate: "12/01/2020"
-            },
-        ];
+    <div class="bd-example" role="tabpanel">
+        <div class="row">
+          <div class="col-4">
+            <div class="list-group" id="list-tab" role="tablist">
+              <a class="list-group-item list-group-item-action" id="list-home-list" data-bs-toggle="tab" href="#list-home" role="tab" aria-controls="list-home" aria-selected="false">Home</a>
+              <a class="list-group-item list-group-item-action" id="list-profile-list" data-bs-toggle="tab" href="#list-profile" role="tab" aria-controls="list-profile" aria-selected="false">Profile</a>
+              <a class="list-group-item list-group-item-action active" id="list-messages-list" data-bs-toggle="tab" href="#list-messages" role="tab" aria-controls="list-messages" aria-selected="true">Messages</a>
+              <a class="list-group-item list-group-item-action" id="list-settings-list" data-bs-toggle="tab" href="#list-settings" role="tab" aria-controls="list-settings" aria-selected="false">Settings</a>
+            </div>
+          </div>
+          <div class="col-8">
+            <div class="tab-content" id="nav-tabContent">
+              <div class="tab-pane fade" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+                <p>Some placeholder content in a paragraph relating to "Home". And some more content, used here just to pad out and fill this tab panel. In production, you would obviously have more real content here. And not just text. It could be anything, really. Text, images, forms.</p>
+              </div>
+              <div class="tab-pane fade" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+                <p>Some placeholder content in a paragraph relating to "Profile". And some more content, used here just to pad out and fill this tab panel. In production, you would obviously have more real content here. And not just text. It could be anything, really. Text, images, forms.</p>
+              </div>
+              <div class="tab-pane fade active show" id="list-messages" role="tabpanel" aria-labelledby="list-messages-list">
+                <p>Some placeholder content in a paragraph relating to "Messages". And some more content, used here just to pad out and fill this tab panel. In production, you would obviously have more real content here. And not just text. It could be anything, really. Text, images, forms.</p>
+              </div>
+              <div class="tab-pane fade" id="list-settings" role="tabpanel" aria-labelledby="list-settings-list">
+                <p>Some placeholder content in a paragraph relating to "Settings". And some more content, used here just to pad out and fill this tab panel. In production, you would obviously have more real content here. And not just text. It could be anything, really. Text, images, forms.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        var table = new Tabulator("#players", {
-            data: tabledata,
-            layout: "fitColumns",
-            pagination: "local",
-            paginationSize: 10,
-            tooltips: true,
-            columns: [{
-                    title: "Player Name",
-                    field: "playername",
-                    sorter: "string",
-                    width: 150,
-                    headerFilter: "input"
-                }, {
-                    title: "Player Price",
-                    field: "price",
-                    sorter: "number",
-                    hozAlign: "left",
-                    formatter: "progress",
-                },
-
-                {
-                    title: "Team",
-                    field: "team",
-                    sorter: "string",
-                    hozAlign: "center",
-                    editor: "select",
-                    headerFilter: true,
-                    headerFilterParams: {
-                        "RCB": "RCB",
-                        "MI": "MI",
-                        "KKR": "KKR",
-                    }
-                }, {
-                    title: "Joining Date",
-                    field: "joiningdate",
-                    sorter: "date",
-                    hozAlign: "center"
-                },
-            ],
-            rowClick: function(e, row) {
-                alert("Row " + row.getData().playerid + " Clicked!!!!");
-            },
-            
-        });
-        
-         document.getElementById("download-csv").addEventListener("click", function(){
-            table.download("csv", "timetable.csv"); //include BOM in output
-         });
-
-         document.getElementById("download-json").addEventListener("click", function(){
-            table.download("json", "data.json");
-         });
-        
-
-   </script>
 </body>
 
 
-
-
  <%- include('./partials/footer.ejs') %>
- 
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
 	<script src="/siofu/client.js"></script>
-	<script src="js/main.js"></script>
+	<script src="js/success.js"></script>
  </html>
