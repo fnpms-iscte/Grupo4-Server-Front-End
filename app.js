@@ -8,6 +8,7 @@ const fs = require('fs');
 
 const workers = []
 const users = []
+let old_id;
 const app = express();
 const server = http.createServer(app)
 const io = socketio(server);
@@ -36,6 +37,10 @@ io.on('connection', socket => {
   socket.emit('welcome','Welcome to ISCTE');
 
   socket.on('user' , ()=>{
+    if(this.old_id != null){
+      console.log("Ha um id antigo")
+      socket.emit('old-user-id', this.old_id)
+    }
      users.push({id : socket.id, files : {}})
      
      console.log("\nNew User registed with id:",socket.id, "\nUsers:", users.length )
@@ -111,8 +116,11 @@ app.get('/', (req,res) => {
 });
 
 app.get('/success', (req,res) => {
-  console.log("\nsuccess")
-  console.log(req.body) 
+  console.log("\nsuccess");
+  console.log(req.body); 
+  this.old_id = req.query.oldid;
+  console.log("ID antigo: ", this.old_id);
+  //res.header('oldid', JSON.stringify({ oldid: this.old_id }));
   res.render('success', { title: 'Resultados do Horário'} );
   // um await aqui para só enviar o file quando estiver pronto
   // const file = 
@@ -121,10 +129,11 @@ app.get('/success', (req,res) => {
 
 app.post('/',  (req,res) => {
   console.log("\nPOST Done");
-  const old_id = req.body.id
-  console.log("\nOld id",old_id);
+  this.old_id = req.body.id
+  console.log("\nOld id",this.old_id);
+  var string = encodeURIComponent(this.old_id);
+  res.redirect('/success?oldid=' + string);
   //res.redirect(302,'/success', {id: old_id} )
-  res.redirect(302,'/success', )
 
 });
 

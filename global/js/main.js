@@ -2,11 +2,17 @@ const socket = io();
 const uploadFiles = document.getElementById("uploadFiles-form");
 var uploader = new SocketIOFileUpload(socket);
 let id
+let old_id
 
 socket.on('welcome', message=>{
     console.log(message,id)
     socket.emit('user', )
 } )
+
+socket.on('old-user-id', oldsocketid =>{
+    console.log("My old id is:",oldsocketid)
+    old_id = oldsocketid;
+})
 
 socket.on('user-id', socketid =>{
     console.log("My id is:",socketid)
@@ -18,7 +24,7 @@ socket.on('message', message =>{
 });
 
 socket.on('results' , async (id_antigo) =>{
-    uploadFiles.submit() 
+    uploadFiles.submit()
 });
 
 uploadFiles.addEventListener("submit", submitForm);
