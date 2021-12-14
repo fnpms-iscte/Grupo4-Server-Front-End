@@ -4,7 +4,8 @@
 <body>
 		<!--method="post"-->
 	<div class="mb-3 wrapper">
-		<form action="/success" method="POST" id='uploadFiles-form'>
+		<form action="/" method="POST" id='uploadFiles-form'>
+			<input type ="text" name= "id" id = "id" hidden value="-1">
 			<div class="rooms">
 				<h2><label for="formFile" class="form-label">Rooms csv:</label></h2>
 				<input class="form-control" type="file" id="formFileRoom" accept=".csv" required>

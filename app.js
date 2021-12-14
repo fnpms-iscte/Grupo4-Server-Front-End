@@ -19,6 +19,13 @@ app.use(express.json());
 app.set('view engine', 'ejs');
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+
+app.use(express.urlencoded({ 
+  extended: true
+}))
+
+
+
 // Run when client connects
 io.on('connection', socket => {
 
@@ -44,10 +51,9 @@ io.on('connection', socket => {
   });
 
   socket.on('message', message=> {
-    console.log(message)
 
     if (message == 'send json') {
-      console.log("hi there")
+      console.log("\nJSon received.\n")
       socket.to(workers[0]).emit('message', "envia res")
     }
   });
@@ -70,13 +76,13 @@ io.on('connection', socket => {
   });
 
   socket.on('results', body =>{
-    var val = JSON.parse(body).id_client
+    var id = JSON.parse(body).id_client
     var index = users.findIndex(function(user, i){
-      return user.id === val
+      return user.id === id
     });
     users[index].files = JSON.parse(body).horarios
 
-    socket.to(val).emit('results',val)
+    socket.to(id).emit('results',id)
   });
   
 
@@ -105,17 +111,21 @@ app.get('/', (req,res) => {
 });
 
 app.get('/success', (req,res) => {
-  console.log("success")
-  return res.render('success', { title: 'Resultados do Horário'} );
+  console.log("\nsuccess")
+  console.log(req.body) 
+  res.render('success', { title: 'Resultados do Horário'} );
   // um await aqui para só enviar o file quando estiver pronto
   // const file = 
   // res.download(file)
 })
 
-app.post('/success',  (req,res) => {
-  console.log("POST Done");
-  console.log(req.body);
-  res.render('success', { title: 'Resultados do Horário'} );
+app.post('/',  (req,res) => {
+  console.log("\nPOST Done");
+  const old_id = req.body.id
+  console.log("\nOld id",old_id);
+  //res.redirect(302,'/success', {id: old_id} )
+  res.redirect(302,'/success', )
+
 });
 
 app.use((req, res) => {
@@ -123,25 +133,10 @@ app.use((req, res) => {
 });
 
 function csv_to_json(fileContent1, fileContent2){
-
   var options = {
     delimiter : ';'
   };
   let jsonObj1 = csvjson.toObject(fileContent1,options);
   let jsonObj2 = csvjson.toObject(fileContent2,options);
   return [jsonObj1,jsonObj2];
-}
-
-function getFiles (){
-  const files_ =  [];
-  var files = fs.readdirSync("./uploads");
-  for (var i in files){
-      var name = dir + '/' + files[i];
-      if (fs.statSync(name).isDirectory()){
-          getFiles(name, files_);
-      } else {
-          files_.push(name);
-      }
-  }
-  return files_;
 }

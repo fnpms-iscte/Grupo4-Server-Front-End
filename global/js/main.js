@@ -18,18 +18,7 @@ socket.on('message', message =>{
 });
 
 socket.on('results' , async (id_antigo) =>{
-    console.log(id_antigo)
-    const data = {id_antigo};
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }
-    console.log(options);
-    fetch('/', options);
-    //location.href = '/success';
+    uploadFiles.submit() 
 });
 
 uploadFiles.addEventListener("submit", submitForm);
@@ -40,7 +29,8 @@ function submitForm(e) {
     const fileLecture = document.getElementById("formFileLecture");
     console.log(fileRoom.files[0]);
     console.log(fileLecture.files[0]);
-
+    var id_form = document.getElementById("id");
+    id_form.value = id
     const file_rooms = new File([fileRoom.files[0]], id+"_"+"rooms")
     const file_lectures = new File([fileLecture.files[0]], id+"_"+"lectures")
 
@@ -51,9 +41,6 @@ function submitForm(e) {
 
     console.log("Files sent\n",files_array);
     
-    uploader.submitFiles(files_array);
-
-    socket.emit('message', 'send json');
-    //location.href = '/success';
+    uploader.submitFiles(files_array);    
 }                                                                                                       
 
