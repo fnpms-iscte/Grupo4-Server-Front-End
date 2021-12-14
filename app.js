@@ -117,11 +117,16 @@ app.get('/success', (req,res) => {
   console.log(req.body); 
   this.old_id = req.query.oldid;
   console.log("ID antigo: ", this.old_id);
-  //res.header('oldid', JSON.stringify({ oldid: this.old_id }));
-  res.render('success', { title: 'Resultados do Horário'} );
-  // um await aqui para só enviar o file quando estiver pronto
-  // const file = 
-  // res.download(file)
+
+
+  var id = this.old_id
+    var index = users.findIndex(function(user, i){
+      return user.id === id
+    });
+  console.log(users[index].files)
+
+
+  res.render('success', { title: 'Resultados do Horário' , horarios : users[index].files } );
 })
 
 app.post('/',  (req,res) => {
