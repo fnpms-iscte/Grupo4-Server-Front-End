@@ -24,21 +24,20 @@
                 <p><%= horario.metricas.detalhe %></p>
                 <p>Detalhes:</p>
                 <% horario.metricas.lista.forEach(metrica => { %>
-                  <p><%=metrica.nome%></p>
-                  <p><%=metrica.valor%></p>
+                  <p><%=metrica.nome%>: <%=metrica.valor%></p>
                 <% }) %>
-                <div class="upload">
-                  <form action="/success" method="POST" id='form-csv-<%=horario.metricas.detalhe%>'></form>
+                
+                  <form action="/success" method="POST" id='form-csv-<%=horario.metricas.detalhe%>'>
+                    <input type ="text" name= "old_id" id = "old_id-<%=horario.metricas.detalhe%>" hidden value="<%= old_id %>">
+                    <input type ="text" name= "name" id = "name-<%=horario.metricas.detalhe%>" hidden value="<%= horario.nome %>">
+                  <div class="upload">
                     <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.metricas.detalhe%>" value="<%= horario.nome %>">Download</button>
+                  </div>
                   </form>
                   <script>
-                    const formCsv = document.getElementById("form-csv-<%=horario.metricas.detalhe%>");
-                    formCsv.addEventListener("submit", function(){
-                        console.log(document.getElementById("download-csv-<%=horario.metricas.detalhe%>").value);
-
-                    });
+                    document.getElementById("form-csv-<%=horario.metricas.detalhe%>").addEventListener("submit", function(){});
                   </script>
-                </div>
+                
               </div>
               <% }) %>
               

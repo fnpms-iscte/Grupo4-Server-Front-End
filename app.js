@@ -128,14 +128,33 @@ app.get('/success', (req,res) => {
   console.log(users[index].files[0].metricas)
 
 
-  res.render('success', { title: 'Resultados do Horário' , horarios : users[index].files } );
+  res.render('success', { title: 'Resultados do Horário' , old_id : this.old_id , horarios : users[index].files } );
 })
 
 app.post('/success',  (req,res) => {
   console.log("Entrei no post do success")
   console.log(req.body);
-  res.attachment(path.resolve('./dummy.txt'))
-  res.send()
+  
+  old_id = req.body.old_id
+  timetable_name = req.body.name
+
+  var id = old_id
+  var index = users.findIndex(function(user, i){
+    return user.id === id
+  });
+
+  let csv
+  users[index].files.forEach(horario => {
+    if(horario.nome == timetable_name){
+      //convert json to csv
+      csv = json_to_csv(horario.horario)
+      console.log(csv)
+    }
+
+  })
+
+  //res.download(csv)
+  res.attachment('horario.csv').send(csv)
 });
 
 app.post('/',  (req,res) => {
@@ -159,4 +178,15 @@ function csv_to_json(fileContent1, fileContent2){
   let jsonObj1 = csvjson.toObject(fileContent1,options);
   let jsonObj2 = csvjson.toObject(fileContent2,options);
   return [jsonObj1,jsonObj2];
+}
+
+function json_to_csv(horario){
+  const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
+  const header = Object.keys(horario[0])
+  const csv = [
+    header.join(';'), // header row first
+    ...horario.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(';'))
+  ].join('\r\n')
+
+  return csv
 }
