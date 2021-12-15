@@ -69,8 +69,8 @@ io.on('connection', socket => {
       var json_aux = csv_to_json(csv_content1,csv_content2);
       console.log(json_aux);
       socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
-      fs.unlinkSync('./uploads/'+socket.id+'_rooms')
-      fs.unlinkSync('./uploads/'+socket.id+'_lectures')
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms.csv')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures.csv')
     }
     
   });
