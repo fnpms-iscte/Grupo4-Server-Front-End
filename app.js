@@ -67,7 +67,7 @@ io.on('connection', socket => {
       let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms.csv', { encoding: "utf8" });
       let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures.csv', { encoding: "utf8" });
       var json_aux = csv_to_json(csv_content1,csv_content2);
-      console.log(json_aux);
+      console.log(json_aux[0]);
       socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
       fs.unlinkSync('./uploads/'+socket.id+'_rooms.csv')
       fs.unlinkSync('./uploads/'+socket.id+'_lectures.csv')
@@ -174,10 +174,12 @@ app.use((req, res) => {
 
 function csv_to_json(fileContent1, fileContent2){
   var options = {
-    delimiter : ','
+    delimiter : ';'
+
   };
   let jsonObj1 = csvjson.toObject(fileContent1,options);
   let jsonObj2 = csvjson.toObject(fileContent2,options);
+
   return [jsonObj1,jsonObj2];
 }
 
@@ -189,5 +191,6 @@ function json_to_csv(horario){
     ...horario.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(';'))
   ].join('\r\n')
 
+  console.log(csv)
   return csv
 }
