@@ -80,6 +80,7 @@ io.on('connection', socket => {
   });
 
   socket.on('results', body =>{
+    console.log("RECEBI RESULTADOS")
     var id = JSON.parse(body).id_client
     var index = users.findIndex(function(user, i){
       return user.id === id
