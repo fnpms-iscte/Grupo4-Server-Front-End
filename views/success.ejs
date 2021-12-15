@@ -12,18 +12,35 @@
         <div class="row">
           <div class="col-4">
             <div class="list-group" id="list-tab" role="tablist">
-              <a class="list-group-item list-group-item-action" id="list-home-list" data-bs-toggle="tab" href="#list-home" role="tab" aria-controls="list-home" aria-selected="false"> <%= horarios[0].metricas.detalhe %></a>
+              <% horarios.forEach(horario => { %>
+                <a class="list-group-item list-group-item-action" id="<%= horario.metricas.detalhe %>-list" data-bs-toggle="tab" href="#<%= horario.metricas.detalhe %>" role="tab" aria-controls="<%= horario.metricas.detalhe %>" aria-selected="false"> <%= horario.nome %></a>
+              <% }) %>
             </div>
           </div>
           <div class="col-8">
             <div class="tab-content" id="nav-tabContent">
-              <div class="tab-pane fade" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
-                <p>Some placeholder content in a paragraph relating to "Home". And some more content, used here just to pad out and fill this tab panel. In production, you would obviously have more real content here. And not just text. It could be anything, really. Text, images, forms.</p>
+              <% horarios.forEach(horario => { %>
+              <div class="tab-pane fade" id="<%= horario.metricas.detalhe %>" role="tabpanel" aria-labelledby="<%= horario.metricas.detalhe %>-list">
+                <p><%= horario.metricas.detalhe %></p>
+                <p>Detalhes:</p>
+                <% horario.metricas.lista.forEach(metrica => { %>
+                  <p><%=metrica.nome%></p>
+                  <p><%=metrica.valor%></p>
+                <% }) %>
                 <div class="upload">
-                    <button type="button" class="btn btn-primary upload-btn">Download</button>
-                  </div>
-            </div>
-              
+                  <form action="/success" method="POST" id='form-csv-<%=horario.metricas.detalhe%>'></form>
+                    <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.metricas.detalhe%>" value="<%= horario.nome %>">Download</button>
+                  </form>
+                  <script>
+                    const formCsv = document.getElementById("form-csv-<%=horario.metricas.detalhe%>");
+                    formCsv.addEventListener("submit", function(){
+                        console.log(document.getElementById("download-csv-<%=horario.metricas.detalhe%>").value);
+
+                    });
+                  </script>
+                </div>
+              </div>
+              <% }) %>
               
             </div>
           </div>
@@ -39,7 +56,7 @@
     
  
     <script src="/socket.io/socket.io.js"></script>
-	<script src="/siofu/client.js"></script>
-	<script src="js/success.js"></script>
+	  <script src="/siofu/client.js"></script>
+	  <script src="js/success.js"></script>
     <script src="js/bootstrap.js"></script>
  </html>

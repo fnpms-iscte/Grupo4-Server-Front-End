@@ -4,6 +4,7 @@ const socketio =  require('socket.io');
 const express = require('express');
 const siofu = require("socketio-file-upload");
 const fs = require('fs');
+const path = require('path');
 
 
 const workers = []
@@ -83,7 +84,7 @@ io.on('connection', socket => {
       return user.id === id
     });
     users[index].files = JSON.parse(body).horarios
-
+    
     socket.to(id).emit('results')
   });
   
@@ -123,11 +124,19 @@ app.get('/success', (req,res) => {
     var index = users.findIndex(function(user, i){
       return user.id === id
     });
-  console.log(users[index].files)
+  console.log(users[index].files[0])
+  console.log(users[index].files[0].metricas)
 
 
   res.render('success', { title: 'Resultados do Horário' , horarios : users[index].files } );
 })
+
+app.post('/success',  (req,res) => {
+  console.log("Entrei no post do success")
+  console.log(req.body);
+  res.attachment(path.resolve('./dummy.txt'))
+  res.send()
+});
 
 app.post('/',  (req,res) => {
   console.log("\nPOST Done");
