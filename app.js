@@ -63,10 +63,11 @@ io.on('connection', socket => {
 
   uploader.on("saved", function(event){
     console.log(event.file.name, "Uploaded")
-    if(event.file.name == (socket.id+"_lectures")){
-      let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms', 'utf-8',);
-      let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures', 'utf-8',);
+    if(event.file.name == (socket.id+"_lectures.csv")){
+      let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms.csv', { encoding: "utf8" });
+      let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures.csv', { encoding: "utf8" });
       var json_aux = csv_to_json(csv_content1,csv_content2);
+      console.log(json_aux);
       socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
       fs.unlinkSync('./uploads/'+socket.id+'_rooms')
       fs.unlinkSync('./uploads/'+socket.id+'_lectures')
@@ -173,7 +174,7 @@ app.use((req, res) => {
 
 function csv_to_json(fileContent1, fileContent2){
   var options = {
-    delimiter : ';'
+    delimiter : ','
   };
   let jsonObj1 = csvjson.toObject(fileContent1,options);
   let jsonObj2 = csvjson.toObject(fileContent2,options);

@@ -32,8 +32,8 @@ function submitForm(e) {
     console.log(fileLecture.files[0]);
     var id_form = document.getElementById("id");
     id_form.value = id
-    const file_rooms = new File([fileRoom.files[0]], id+"_"+"rooms")
-    const file_lectures = new File([fileLecture.files[0]], id+"_"+"lectures")
+    const file_rooms = new File([fileRoom.files[0]], id+"_"+"rooms.csv")
+    const file_lectures = new File([fileLecture.files[0]], id+"_"+"lectures.csv")
 
     let files_array = [
         file_rooms,
