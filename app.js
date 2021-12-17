@@ -69,8 +69,8 @@ io.on('connection', socket => {
       var json_aux = csv_to_json(csv_content1,csv_content2);
       console.log(json_aux);
       socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
-      fs.unlinkSync('./uploads/'+socket.id+'_rooms')
-      fs.unlinkSync('./uploads/'+socket.id+'_lectures')
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms.csv')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures.csv')
     }
     
   });
@@ -80,6 +80,7 @@ io.on('connection', socket => {
   });
 
   socket.on('results', body =>{
+    console.log(body);
     var id = JSON.parse(body).id_client
     var index = users.findIndex(function(user, i){
       return user.id === id
@@ -145,10 +146,10 @@ app.post('/success',  (req,res) => {
   });
 
   let csv
-  users[index].files.forEach(horario => {
-    if(horario.nome == timetable_name){
+  users[index].lectures.forEach(lecture => {
+    if(lecture.nome == timetable_name){
       //convert json to csv
-      csv = json_to_csv(horario.horario)
+      csv = json_to_csv(lecture)
       console.log(csv)
     }
 

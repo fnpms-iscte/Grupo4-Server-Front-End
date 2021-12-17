@@ -8,6 +8,7 @@
    
 
 <body>
+  <div class="mb-3 wrapper">
     <div class="bd-example" role="tabpanel">
         <div class="row">
           <div class="col-4">
@@ -17,22 +18,27 @@
               <% }) %>
             </div>
           </div>
-          <div class="col-8">
-            <div class="tab-content" id="nav-tabContent">
-              <% horarios.forEach(horario => { %>
-              <div class="tab-pane fade" id="<%= horario.metricas.detalhe %>" role="tabpanel" aria-labelledby="<%= horario.metricas.detalhe %>-list">
-                <p><%= horario.metricas.detalhe %></p>
-                <p>Detalhes:</p>
-                <% horario.metricas.lista.forEach(metrica => { %>
-                  <p><%=metrica.nome%>: <%=metrica.valor%></p>
-                <% }) %>
-                
+          <div class="mb-3 wrapper2">
+            <div class="col-8">
+              <div class="tab-content" id="nav-tabContent">
+                <% horarios.forEach(horario => { %>
+                <div class="tab-pane fade" id="<%= horario.metricas.detalhe %>" role="tabpanel" aria-labelledby="<%= horario.metricas.detalhe %>-list">
+                  <div class="header-wrapper2">
+                    <h2><label class="form-label"><%= horario.metricas.detalhe %></label></h2>
+                  </div>
+                  <div class="body-wrapper2">
+                    <h3><label class="form-label">Detalhes:</label></h3>
+                  <% horario.metricas.lista.forEach(metrica => { %>
+                    <p><%=metrica.nome%>: <%=metrica.valor%></p>
+                  <% }) %>
+                  </div>
+                  
                   <form action="/success" method="POST" id='form-csv-<%=horario.metricas.detalhe%>'>
                     <input type ="text" name= "old_id" id = "old_id-<%=horario.metricas.detalhe%>" hidden value="<%= old_id %>">
                     <input type ="text" name= "name" id = "name-<%=horario.metricas.detalhe%>" hidden value="<%= horario.nome %>">
-                  <div class="upload">
-                    <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.metricas.detalhe%>" value="<%= horario.nome %>">Download</button>
-                  </div>
+                    <div class="upload">
+                      <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.metricas.detalhe%>" value="<%= horario.nome %>">Download</button>
+                    </div>
                   </form>
                   <script>
                     document.getElementById("form-csv-<%=horario.metricas.detalhe%>").addEventListener("submit", function(){});
@@ -44,8 +50,9 @@
             </div>
           </div>
         </div>
-      </div>    
-    
+      </div>
+    </div>    
+  </div>
 
     
 </body>
