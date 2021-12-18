@@ -28,8 +28,6 @@ function submitForm(e) {
     e.preventDefault();
     const fileRoom = document.getElementById("formFileRoom");
     const fileLecture = document.getElementById("formFileLecture");
-    console.log(fileRoom.files[0]);
-    console.log(fileLecture.files[0]);
     var id_form = document.getElementById("id");
     id_form.value = id
     const file_rooms = new File([fileRoom.files[0]], id+"_"+"rooms.csv")
@@ -39,8 +37,6 @@ function submitForm(e) {
         file_rooms,
         file_lectures
     ]   
-
-    console.log("Files sent\n",files_array);
     
     uploader.submitFiles(files_array);    
 }                                                                                                       

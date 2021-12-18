@@ -36,19 +36,19 @@ io.on('connection', socket => {
 
   socket.on('user' , ()=>{
     if(this.old_id != null){
-      console.log("Ha um id antigo")
+
       socket.emit('old-user-id', this.old_id)
     }
      users.push({id : socket.id, files : {}})
      
-     console.log("\nNew User registed with id:",socket.id, "\nUsers:", users.length )
+ 
      socket.emit('user-id', socket.id)
   })
 
   socket.on('worker', token  =>{
     if (token == 659812) {
       workers.push(socket.id)
-      console.log("\nNew Worker registed with id:",socket.id,"\nWorkers:",workers.length)
+
       socket.to(users).emit('message', 'Worker avaible');
     }
   });
@@ -56,18 +56,18 @@ io.on('connection', socket => {
   socket.on('message', message=> {
 
     if (message == 'send json') {
-      console.log("\nJSon received.\n")
+
       socket.to(workers[0]).emit('message', "envia res")
     }
   });
 
   uploader.on("saved", function(event){
-    console.log(event.file.name, "Uploaded")
+
     if(event.file.name == (socket.id+"_lectures.csv")){
       let csv_content1 = fs.readFileSync('./uploads/'+socket.id+'_rooms.csv', { encoding: "utf8" });
       let csv_content2 = fs.readFileSync('./uploads/'+socket.id+'_lectures.csv', { encoding: "utf8" });
       var json_aux = csv_to_json(csv_content1,csv_content2);
-      console.log(json_aux);
+
       socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: socket.id});
       fs.unlinkSync('./uploads/'+socket.id+'_rooms.csv')
       fs.unlinkSync('./uploads/'+socket.id+'_lectures.csv')
@@ -75,17 +75,14 @@ io.on('connection', socket => {
     
   });
 
-  socket.on('filesSent', body =>{
-    // Para APAGAR ???     
-  });
-
   socket.on('results', body =>{
-    console.log(body);
-    var id = JSON.parse(body).id_client
+
+    var id = JSON.parse(body).id
+
     var index = users.findIndex(function(user, i){
-      return user.id === id
+       return user.id === id
     });
-    users[index].files = JSON.parse(body).horarios
+    users[index].files = JSON.parse(body).Horarios
     
     socket.to(id).emit('results')
   });
@@ -104,7 +101,7 @@ io.on('connection', socket => {
         const index = workers.indexOf(socket.id) ;
         if (index > -1) {
           workers.splice(index, 1);
-          console.log("\nWorker with id",socket.id, "disconnected \nWorkers:",workers.length)
+
 
         }
       }
@@ -116,26 +113,22 @@ app.get('/', (req,res) => {
 });
 
 app.get('/success', (req,res) => {
-  console.log("\nsuccess");
-  console.log(req.body); 
+
   this.old_id = req.query.oldid;
-  console.log("ID antigo: ", this.old_id);
+
 
 
   var id = this.old_id
     var index = users.findIndex(function(user, i){
       return user.id === id
     });
-  console.log(users[index].files[0])
-  console.log(users[index].files[0].metricas)
+
 
 
   res.render('success', { title: 'Resultados do Horário' , old_id : this.old_id , horarios : users[index].files } );
 })
 
 app.post('/success',  (req,res) => {
-  console.log("Entrei no post do success")
-  console.log(req.body);
   
   old_id = req.body.old_id
   timetable_name = req.body.name
@@ -146,23 +139,25 @@ app.post('/success',  (req,res) => {
   });
 
   let csv
-  users[index].lectures.forEach(lecture => {
-    if(lecture.nome == timetable_name){
+
+  users[index].files.forEach(horario => {
+
+    if(horario.name == timetable_name){
       //convert json to csv
-      csv = json_to_csv(lecture)
-      console.log(csv)
+
+      csv = json_to_csv(horario.lectures)
+
     }
 
   })
 
-  //res.download(csv)
   res.attachment('horario.csv').send(csv)
 });
 
 app.post('/',  (req,res) => {
-  console.log("\nPOST Done");
+
   this.old_id = req.body.id
-  console.log("\nOld id",this.old_id);
+
   var string = encodeURIComponent(this.old_id);
   res.redirect('/success?oldid=' + string);
   //res.redirect(302,'/success', {id: old_id} )
@@ -175,10 +170,12 @@ app.use((req, res) => {
 
 function csv_to_json(fileContent1, fileContent2){
   var options = {
-    delimiter : ','
+    delimiter : ';'
+
   };
   let jsonObj1 = csvjson.toObject(fileContent1,options);
   let jsonObj2 = csvjson.toObject(fileContent2,options);
+
   return [jsonObj1,jsonObj2];
 }
 
@@ -189,6 +186,7 @@ function json_to_csv(horario){
     header.join(';'), // header row first
     ...horario.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(';'))
   ].join('\r\n')
+
 
   return csv
 }

@@ -14,7 +14,7 @@
           <div class="col-4">
             <div class="list-group" id="list-tab" role="tablist">
               <% horarios.forEach(horario => { %>
-                <a class="list-group-item list-group-item-action" id="<%= horario.metricas.detalhe %>-list" data-bs-toggle="tab" href="#<%= horario.metricas.detalhe %>" role="tab" aria-controls="<%= horario.metricas.detalhe %>" aria-selected="false"> <%= horario.nome %></a>
+                <a class="list-group-item list-group-item-action" id="<%= horario.id %>-list" data-bs-toggle="tab" href="#<%= horario.id %>" role="tab" aria-controls="<%= horario.id %>" aria-selected="false"> <%= horario.name %></a>
               <% }) %>
             </div>
           </div>
@@ -22,26 +22,26 @@
             <div class="col-8">
               <div class="tab-content" id="nav-tabContent">
                 <% horarios.forEach(horario => { %>
-                <div class="tab-pane fade" id="<%= horario.metricas.detalhe %>" role="tabpanel" aria-labelledby="<%= horario.metricas.detalhe %>-list">
+                <div class="tab-pane fade" id="<%= horario.id %>" role="tabpanel" aria-labelledby="<%= horario.id %>-list">
                   <div class="header-wrapper2">
-                    <h2><label class="form-label"><%= horario.metricas.detalhe %></label></h2>
+                    <h2><label class="form-label"><%= horario.best_metric %></label></h2>
                   </div>
                   <div class="body-wrapper2">
                     <h3><label class="form-label">Detalhes:</label></h3>
-                  <% horario.metricas.lista.forEach(metrica => { %>
-                    <p><%=metrica.nome%>: <%=metrica.valor%></p>
+                  <% horario.metrics.forEach(metrica => { %>
+                    <p><%=metrica.name%>: <%=metrica.results%></p>
                   <% }) %>
                   </div>
                   
-                  <form action="/success" method="POST" id='form-csv-<%=horario.metricas.detalhe%>'>
-                    <input type ="text" name= "old_id" id = "old_id-<%=horario.metricas.detalhe%>" hidden value="<%= old_id %>">
-                    <input type ="text" name= "name" id = "name-<%=horario.metricas.detalhe%>" hidden value="<%= horario.nome %>">
+                  <form action="/success" method="POST" id='form-csv-<%=horario.id%>'>
+                    <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
+                    <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
                     <div class="upload">
-                      <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.metricas.detalhe%>" value="<%= horario.nome %>">Download</button>
+                      <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.id%>" value="<%= horario.name %>">Download</button>
                     </div>
                   </form>
                   <script>
-                    document.getElementById("form-csv-<%=horario.metricas.detalhe%>").addEventListener("submit", function(){});
+                    document.getElementById("form-csv-<%=horario.id%>").addEventListener("submit", function(){});
                   </script>
                 
               </div>
