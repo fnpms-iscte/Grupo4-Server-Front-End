@@ -15,7 +15,7 @@
             <div class="list-group" id="list-tab" role="tablist">
               <% horarios.forEach(horario => { %>
                 <% if(horario.name=="Horario1"){ %>
-                  <a class="list-group-item list-group-item-action" id="<%= horario.id %>-list" data-bs-toggle="tab" href="#<%= horario.id %>" role="tab" aria-controls="<%= horario.id %>" aria-selected="true"> <%= horario.name %></a>
+                  <a class="list-group-item list-group-item-action active" id="<%= horario.id %>-list" data-bs-toggle="tab" href="#<%= horario.id %>" role="tab" aria-controls="<%= horario.id %>" aria-selected="true"> <%= horario.name %></a>
                 <% }else{ %>
                   <a class="list-group-item list-group-item-action" id="<%= horario.id %>-list" data-bs-toggle="tab" href="#<%= horario.id %>" role="tab" aria-controls="<%= horario.id %>" aria-selected="false"> <%= horario.name %></a>
                 <% } %>
