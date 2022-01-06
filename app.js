@@ -5,6 +5,14 @@ const express = require('express');
 const siofu = require("socketio-file-upload");
 const fs = require('fs');
 const path = require('path');
+var multer = require('multer');
+var storage = multer.diskStorage({
+	destination: 'uploads/',
+	filename: function (req, file, callback) {
+		callback(null, file.originalname);
+	}
+});
+var upload = multer({ storage: storage });
 
 
 const workers = []
@@ -76,7 +84,7 @@ io.on('connection', socket => {
 	});
 
 	socket.on('results', body => {
-		console.log(body)
+		console.log(JSON.parse(body))
 		var id = JSON.parse(body).id
 
 		var index = users.findIndex(function (user, i) {
@@ -162,6 +170,11 @@ app.post('/', (req, res) => {
 	res.redirect('/success?oldid=' + string);
 	//res.redirect(302,'/success', {id: old_id} )
 
+});
+                                       //,3
+app.post('/csv-files', upload.array('file'), (req, res, next) => {
+	console.log(req.files)
+	res.send("Done!")
 });
 
 app.use((req, res) => {
