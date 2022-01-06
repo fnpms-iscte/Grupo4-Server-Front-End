@@ -138,20 +138,20 @@ app.post('/success', (req, res) => {
 		return user.id === id
 	});
 
-	let csv
+	let xml
 
 	users[index].files.forEach(horario => {
 
 		if (horario.name == timetable_name) {
-			//convert json to csv
+			//convert json to xml
 
-			csv = json_to_csv(horario.lectures)
+			xml = json_to_xml(horario.lectures)
 
 		}
 
 	})
 
-	res.attachment('horario.csv').send(csv)
+	res.attachment('horario.xml').send(xml)
 });
 
 app.post('/', (req, res) => {
@@ -168,15 +168,27 @@ app.use((req, res) => {
 	res.render('404', { title: '| 404 Error' });
 });
 
-function csv_to_json(fileContent1, fileContent2) {
+function csv_to_json(fileContent1,fileContent2) {
 	var options = {
 		delimiter: ';'
 
 	};
 	let jsonObj1 = csvjson.toObject(fileContent1, options);
 	let jsonObj2 = csvjson.toObject(fileContent2, options);
+	;
 
-	return [jsonObj1, jsonObj2];
+	return [jsonObj1,jsonObj2];
+}
+
+function treatedcsv_to_json(horariocsv) {
+	var options = {
+		delimiter: ';'
+
+	};
+	let jsonObj = csvjson.toObject(horariocsv, options);
+	;
+
+	return [jsonObj,jsonObj];
 }
 
 function json_to_csv(horario) {
@@ -190,3 +202,26 @@ function json_to_csv(horario) {
 
 	return csv
 }
+
+function json_to_xml(horario) {
+	var xml = '';
+	for (var prop in horario) {
+	  xml += horario[prop] instanceof Array ? '' : "<" + prop + ">";
+	  if (horario[prop] instanceof Array) {
+		for (var array in horario[prop]) {
+		  xml += "<" + prop + ">";
+		  xml += json_to_xml(new Object(horario[prop][array]));
+		  xml += "</" + prop + ">";
+		}
+	  } else if (typeof horario[prop] == "object") {
+		xml += json_to_xml(new Object(horario[prop]));
+	  } else {
+		xml += horario[prop];
+	  }
+	  xml += horario[prop] instanceof Array ? '' : "</" + prop + ">";
+	}
+	var xml = xml.replace(/<\/?[0-9]{1,}>/g, '');
+	return xml
+  }
+
+  // Enviar  em formato JSON apartir do front-end (cliente / main.js)

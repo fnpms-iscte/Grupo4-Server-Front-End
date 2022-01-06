@@ -40,8 +40,19 @@
                   <form action="/success" method="POST" id='form-csv-<%=horario.id%>'>
                     <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
                     <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
-                    <div class="upload">
-                      <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.id%>" value="<%= horario.name %>">Download</button>
+                    <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+                      <button type="button" class="btn btn-secondary">Show in browser</button>
+                    
+                      <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Download
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                          <a class="dropdown-item" href="#">Download CSV</a>
+                          <a class="dropdown-item" href="#">Download XML</a>
+                          <a class="dropdown-item" href="#">Download JSON</a>
+                        </div>
+                      </div>
                     </div>
                   </form>
                   <script>
