@@ -5,6 +5,7 @@ const express = require('express');
 const siofu = require("socketio-file-upload");
 const fs = require('fs');
 const path = require('path');
+const { Tabulator } = require('tabulator-tables');
 
 
 const workers = []
@@ -128,7 +129,33 @@ app.get('/success', (req, res) => {
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
 })
 
-app.post('/success', (req, res) => {
+app.post('/successcsv', (req, res) => {
+
+	old_id = req.body.old_id
+	timetable_name = req.body.name
+
+	var id = old_id
+	var index = users.findIndex(function (user, i) {
+		return user.id === id
+	});
+
+	let csv
+
+	users[index].files.forEach(horario => {
+
+		if (horario.name == timetable_name) {
+			//convert json to csv
+
+			csv = json_to_csv(horario.lectures)
+
+		}
+
+	})
+
+	res.attachment('horario.csv').send(csv)
+});
+
+app.post('/successxml', (req, res) => {
 
 	old_id = req.body.old_id
 	timetable_name = req.body.name
@@ -152,6 +179,58 @@ app.post('/success', (req, res) => {
 	})
 
 	res.attachment('horario.xml').send(xml)
+});
+
+app.post('/successjson', (req, res) => {
+
+	old_id = req.body.old_id
+	timetable_name = req.body.name
+
+	var id = old_id
+	var index = users.findIndex(function (user, i) {
+		return user.id === id
+	});
+
+	let json
+
+	users[index].files.forEach(horario => {
+
+		if (horario.name == timetable_name) {
+			//convert json object to json file
+
+			json = jsonobj_to_jsonfile(horario.lectures)
+
+		}
+
+	})
+
+	res.attachment('horario.json').send(json)
+});
+
+app.post('/successhtml', (req, res) => {
+
+	old_id = req.body.old_id
+	timetable_name = req.body.name
+
+	var id = old_id
+	var index = users.findIndex(function (user, i) {
+		return user.id === id
+	});
+
+	let html
+
+	users[index].files.forEach(horario => {
+
+		if (horario.name == timetable_name) {
+			//convert json to html
+
+			json = json_to_html(horario.lectures)
+
+		}
+
+	})
+
+	res.attachment('horario.html').send(html)
 });
 
 app.post('/', (req, res) => {
@@ -188,7 +267,7 @@ function treatedcsv_to_json(horariocsv) {
 	let jsonObj = csvjson.toObject(horariocsv, options);
 	;
 
-	return [jsonObj,jsonObj];
+	return [jsonObj];
 }
 
 function json_to_csv(horario) {
@@ -224,4 +303,14 @@ function json_to_xml(horario) {
 	return xml
   }
 
-  // Enviar  em formato JSON apartir do front-end (cliente / main.js)
+function jsonobj_to_jsonfile(horario) {
+	const fs = require('fs');
+	var file = JSON.stringify(horario);
+	// mudar o nome para o id do horario
+	return file
+}
+
+function json_to_html(horario){
+	var table = new Tabulator("Horario",{data:horario,autoColumns:true});
+	return table
+}
