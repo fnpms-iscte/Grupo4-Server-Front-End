@@ -8,6 +8,14 @@ const path = require('path');
 const { Tabulator } = require('tabulator-tables');
 const xmlParser = require('xml-js')
 
+var multer = require('multer');
+var storage = multer.diskStorage({
+    destination: 'uploads/',
+    filename: function (req, file, callback) {
+        callback(null, file.originalname);
+    }
+});
+var upload = multer({ storage: storage });
 
 const workers = []
 const users = []
@@ -137,17 +145,55 @@ app.get('/success', (req, res) => {
 
 	this.old_id = req.query.oldid;
 
-
-
 	var id = this.old_id
 	var index = users.findIndex(function (user, i) {
 		return user.id === id
 	});
 
-
-
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
 })
+
+app.post('/csv-files', upload.array('file'), (req, res, next) => {
+	
+	let pictureFiles = req.files;
+	let multiplePicturePromise = pictureFiles.map((picture) => {
+		console.log("Vou processar: " + picture.filename)
+		var aux = picture.filename.split("_")
+		var timetable_name = aux[aux.length-1].split(".")[0]
+		var id = picture.filename.substring(0,picture.filename.length-5-timetable_name.length)
+		console.log("id: " + id)
+		console.log("Horario: " + timetable_name)
+
+		var index = users.findIndex(function (user, i) {
+			return user.id === id
+		});
+		console.log("Index: " + index)
+		users[index].files.forEach(horario => {
+
+			if (horario.name == timetable_name) {
+				//convert json to csv
+				console.log("Vou carregar...")
+				fs.readFile(picture.path, 'utf8' , (err, data) => {
+					console.log(id)
+					console.log(timetable_name)
+					horario.lectures = treatedcsv_to_json(data)[0]
+				  })
+				fs.unlink(picture.path, (err) => {
+				  
+				})
+			}
+	
+		})
+
+
+	})
+
+	console.log("Done!")
+    res.send("Done!")
+	// req.files.forEach(function (item, index){
+	// 	console.log("file: " + item[1])
+	// })
+});
 
 app.post('/successcsv', (req, res) => {
 
@@ -165,8 +211,7 @@ app.post('/successcsv', (req, res) => {
 
 		if (horario.name == timetable_name) {
 			//convert json to csv
-
-			csv = json_to_csv(horario.lectures)
+			csv =json_to_csv(horario.lectures)
 
 		}
 
@@ -237,12 +282,9 @@ app.post('/tabulator', (req, res) => {
 		return user.id === id
 	});
 
-	let table
-
 	users[index].files.forEach(horario => {
 
 		if (horario.name == timetable_name) {
-
 		res.render('tabulator', { title: 'Horario', old_id: this.old_id, horario});
 	}
 
@@ -256,7 +298,6 @@ app.post('/', (req, res) => {
 
 	var string = encodeURIComponent(this.old_id);
 	res.redirect('/success?oldid=' + string);
-	//res.redirect(302,'/success', {id: old_id} )
 
 });
 

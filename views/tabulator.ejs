@@ -17,7 +17,20 @@
     <script>var tabledata = [
 
         <% horario.lectures.forEach(lecture => { %>
-            {Curso:"<%= lecture.Curso %>", Unidade_de_execucaoo:"<%= lecture.Unidade_de_execucaoo %>", Turno:"<%= lecture.Turno %>", Turma:"<%= lecture.Turma %>",  Inscritos_no_turno:"<%= lecture. Inscritos_no_turno %>", Turnos_com_capacidade_superior_a_capacidade_das_caracteristicas_das_salas:"<%= lecture.Turnos_com_capacidade_superior_a_capacidade_das_caracteristicas_das_salas %>", Turno_com_inscricoes_superiores_a_capacidade_das_salas:"<%= lecture.Turno_com_inscricoes_superiores_a_capacidade_das_salas %>", Dia_da_Semana:"<%= lecture.Dia_da_Semana %>", Inicio:"<%= lecture.Inicio %>", Fim:"<%= lecture.Fim %>", Caracteristicas_da_sala_pedida_para_a_aula:"<%= lecture.Caracteristicas_da_sala_pedida_para_a_aula %>", Sala_da_aula:"<%= lecture.Sala_da_aula %>", Lotacao:"<%= lecture.Lotacao %>", Caracteristicas_reais_da_sala:"<%= lecture.Caracteristicas_reais_da_sala %>"},
+            {"Curso":"<%= lecture.Curso %>",
+            "Unidade de execução":"<%= lecture["Unidade de execução"] %>",
+            "Turno":"<%= lecture.Turno %>", "Turma":"<%= lecture.Turma %>",
+            "Inscritos no turno (no 1º semestre é baseado em estimativas)":"<%= lecture["Inscritos no turno (no 1º semestre é baseado em estimativas)"] %>",
+            "Turnos com capacidade superior à capacidade das características das salas":"<%= lecture["Turnos com capacidade superior à capacidade das características das salas"] %>",
+            "Turno com inscrições superiores à capacidade das salas":"<%= lecture["Turno com inscrições superiores à capacidade das salas"] %>",
+            "Dia da Semana":"<%= lecture["Dia da Semana"] %>", 
+            "Início":"<%= lecture.Início %>",
+            "Fim":"<%= lecture.Fim %>",
+            "Caracteristicas da sala pedida para a aula":"<%= lecture["Características da sala pedida para a aula"] %>",
+            "Sala da aula":"<%= lecture["Sala da aula"] %>",
+            "Lotação":"<%= lecture.Lotação %>",
+            "Características reais da sala":"<%= lecture["Características reais da sala"] %>"
+            },
         <% }) %>
     ];
     
