@@ -29,6 +29,7 @@
     "path": "^0.12.7",
     "socket.io": "^4.4.0",
     "socketio-file-upload": "^0.7.3",
-    "tabulator-tables": "^5.0.7"
+    "tabulator-tables": "^5.0.10",
+    "xml-js": "^1.6.11"
   }
 }

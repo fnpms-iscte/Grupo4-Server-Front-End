@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+ <html>
+    <head>
+        <%- include('./partials/header.ejs') %>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/styles_success.css">
+        <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+        <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+
+    </head>
+
+    <body>
+        <div id="horario"></div>
+        
+    
+    <script>var tabledata = [
+
+        <% horario.lectures.forEach(lecture => { %>
+            {Curso:"<%= lecture.Curso %>", Unidade_de_execucaoo:"<%= lecture.Unidade_de_execucaoo %>", Turno:"<%= lecture.Turno %>", Turma:"<%= lecture.Turma %>",  Inscritos_no_turno:"<%= lecture. Inscritos_no_turno %>", Turnos_com_capacidade_superior_a_capacidade_das_caracteristicas_das_salas:"<%= lecture.Turnos_com_capacidade_superior_a_capacidade_das_caracteristicas_das_salas %>", Turno_com_inscricoes_superiores_a_capacidade_das_salas:"<%= lecture.Turno_com_inscricoes_superiores_a_capacidade_das_salas %>", Dia_da_Semana:"<%= lecture.Dia_da_Semana %>", Inicio:"<%= lecture.Inicio %>", Fim:"<%= lecture.Fim %>", Caracteristicas_da_sala_pedida_para_a_aula:"<%= lecture.Caracteristicas_da_sala_pedida_para_a_aula %>", Sala_da_aula:"<%= lecture.Sala_da_aula %>", Lotacao:"<%= lecture.Lotacao %>", Caracteristicas_reais_da_sala:"<%= lecture.Caracteristicas_reais_da_sala %>"},
+        <% }) %>
+    ];
+    
+    //initialize table
+    var table = new Tabulator("#horario", {
+        data:tabledata, //assign data to table
+        autoColumns:true, //create columns from data field names
+    });
+    </script>
+    </body>
+ </html>

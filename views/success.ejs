@@ -59,11 +59,11 @@
                       </div>
                     </form>
                     </form>
-                    <form action="/successhtml" method="POST" id='form-html-<%=horario.id%>'>
+                    <form action="/tabulator" method="POST" id='form-html-<%=horario.id%>'>
                       <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
                       <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
                       <div class="upload">
-                        <button type="submit" class="btn btn-primary upload-btn" id="download-html-<%=horario.id%>" value="<%= horario.name %>">Download HTML</button>
+                        <button type="submit" class="btn btn-primary upload-btn" id="view_in_browser-<%=horario.id%>" value="<%= horario.name %>">View in browser</button>
                       </div>
                     </form>
                   </div>

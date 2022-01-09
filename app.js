@@ -6,6 +6,7 @@ const siofu = require("socketio-file-upload");
 const fs = require('fs');
 const path = require('path');
 const { Tabulator } = require('tabulator-tables');
+const xmlParser = require('xml-js')
 
 
 const workers = []
@@ -30,6 +31,7 @@ app.use(express.urlencoded({
 io.on('connection', socket => {
 
 	var uploader = new siofu();
+	uploader.chunkSize = 100 * 1024 * 1024;
 	uploader.dir = "./uploads";
 	uploader.listen(socket);
 
@@ -68,16 +70,34 @@ io.on('connection', socket => {
 			let csv_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.csv', { encoding: "utf8" });
 			let csv_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.csv', { encoding: "utf8" });
 			var json_aux = csv_to_json(csv_content1, csv_content2);
-
+			console.log(typeof(json_aux))
 			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
 			fs.unlinkSync('./uploads/' + socket.id + '_rooms.csv')
 			fs.unlinkSync('./uploads/' + socket.id + '_lectures.csv')
+		}
+		if (event.file.name == (socket.id + "_lectures.json")) {
+			let json_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.json', { encoding: "utf8" });
+			let json_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.json', { encoding: "utf8" });
+			var json_aux = json_to_jsonObj(json_content1, json_content2);
+			console.log(typeof(json_aux))
+			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
+			fs.unlinkSync('./uploads/' + socket.id + '_rooms.json')
+			fs.unlinkSync('./uploads/' + socket.id + '_lectures.json')
+		}
+		if (event.file.name == (socket.id + "_lectures.xml")) {
+			let xml_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.xml', { encoding: "utf8" });
+			let xml_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.xml', { encoding: "utf8" });
+			var json_aux = xml_to_json(xml_content1, xml_content2);
+			console.log(json_aux)
+			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
+			fs.unlinkSync('./uploads/' + socket.id + '_rooms.xml')
+			fs.unlinkSync('./uploads/' + socket.id + '_lectures.xml')
 		}
 
 	});
 
 	socket.on('results', body => {
-		console.log(body)
+		// console.log(body)
 		var id = JSON.parse(body).id
 
 		var index = users.findIndex(function (user, i) {
@@ -151,7 +171,6 @@ app.post('/successcsv', (req, res) => {
 		}
 
 	})
-
 	res.attachment('horario.csv').send(csv)
 });
 
@@ -196,7 +215,7 @@ app.post('/successjson', (req, res) => {
 	users[index].files.forEach(horario => {
 
 		if (horario.name == timetable_name) {
-			//convert json object to json file
+			//convert json to json file
 
 			json = jsonobj_to_jsonfile(horario.lectures)
 
@@ -204,10 +223,11 @@ app.post('/successjson', (req, res) => {
 
 	})
 
+
 	res.attachment('horario.json').send(json)
 });
 
-app.post('/successhtml', (req, res) => {
+app.post('/tabulator', (req, res) => {
 
 	old_id = req.body.old_id
 	timetable_name = req.body.name
@@ -217,20 +237,17 @@ app.post('/successhtml', (req, res) => {
 		return user.id === id
 	});
 
-	let html
+	let table
 
 	users[index].files.forEach(horario => {
 
 		if (horario.name == timetable_name) {
-			//convert json to html
 
-			json = json_to_html(horario.lectures)
+		res.render('tabulator', { title: 'Horario', old_id: this.old_id, horario});
+	}
 
-		}
-
-	})
-
-	res.attachment('horario.html').send(html)
+    })
+    
 });
 
 app.post('/', (req, res) => {
@@ -254,6 +271,22 @@ function csv_to_json(fileContent1,fileContent2) {
 	};
 	let jsonObj1 = csvjson.toObject(fileContent1, options);
 	let jsonObj2 = csvjson.toObject(fileContent2, options);
+	;
+
+	return [jsonObj1,jsonObj2];
+}
+
+function json_to_jsonObj(fileContent1,fileContent2) {
+	let jsonObj1 = JSON.parse(fileContent1);
+	let jsonObj2 = JSON.parse(fileContent2);
+	;
+
+	return [jsonObj1,jsonObj2];
+}
+
+function xml_to_json(fileContent1,fileContent2) {
+	let jsonObj1 = JSON.parse(xmlParser.xml2json(fileContent1));
+	let jsonObj2 = JSON.parse(xmlParser.xml2json(fileContent2));
 	;
 
 	return [jsonObj1,jsonObj2];
@@ -308,9 +341,5 @@ function jsonobj_to_jsonfile(horario) {
 	var file = JSON.stringify(horario);
 	// mudar o nome para o id do horario
 	return file
-}
 
-function json_to_html(horario){
-	var table = new Tabulator("Horario",{data:horario,autoColumns:true});
-	return table
 }
