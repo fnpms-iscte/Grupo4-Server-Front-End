@@ -19,6 +19,12 @@ socket.on('message', message =>{
 });
 
 socket.on('results' , () =>{
+    console.log("Os resultados chegaram :)")
+    uploadFiles.submit()
+});
+
+socket.on('user_headers', headers =>{
+    console.log(headers)
     uploadFiles.submit()
 });
 
@@ -37,7 +43,7 @@ function submitForm(e) {
         file_rooms,
         file_lectures
     ]   
-    
     uploader.submitFiles(files_array);    
+    console.log("files sent");
 }                                                                                                       
 

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+ <html>
+    <head>
+    <%- include('./partials/header.ejs') %>
+    <link rel="stylesheet" href="/styles_dataprocessing.css">
+    </head>
+    <body>
+      <div class="container">
+        <form action="/dataprocessing_rooms" method="POST" id="form-headers">
+          <input type ="text" name= "id" id = "id" hidden value="-1">
+          <div class="row"> 
+              <% headers.forEach(header => { %>
+                <div class="form-group">
+                  <div class="col text-center">
+                    <label for="FormControl<%=header%>"><%= header %></label>
+                  </div>
+                  <div class="col">
+                    <select class="form-control form-control-sm"  name= "<%=header%>" type="text" id="FormControl<%=header%>" aria-label=".form-select-sm example">
+                      <% for (let i = 0; i < default_headers.length; i++) { %>
+                        <% if (i== 5) { %>
+                          <option value="<%= i%>" selected><%= default_headers[i] %></option>
+                        <% }else{ %>
+                        <option value="<%= i%>"><%= default_headers[i] %></option>
+                        <% } %>
+                      <% } %>
+                    </select>
+                  </div>
+                  <div class="w-100"></div>
+                </div>
+              <% }) %>
+            <input type ="text" name= "old_id" id = "old_id" hidden value="<%= old_id %>">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+       </div>
+    </body>
+    <%- include('./partials/footer.ejs') %>
+    
+ 
+    <script src="/socket.io/socket.io.js"></script>
+	  <script src="/siofu/client.js"></script>
+	  <script src="js/dataprocessing.js"></script>
+    <script src="js/bootstrap.js"></script>
+ </html>
