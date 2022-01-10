@@ -30,10 +30,11 @@
     "jquery": "^3.6.0",
     "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
-    "multer": "^1.4.3",
+    "multer": "^1.4.4",
     "path": "^0.12.7",
     "socket.io": "^4.4.0",
     "socketio-file-upload": "^0.7.3",
-    "tabulator-tables": "^5.0.7"
+    "tabulator-tables": "^5.0.10",
+    "xml-js": "^1.6.11"
   }
 }

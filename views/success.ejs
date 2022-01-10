@@ -36,14 +36,37 @@
                     <p><%=metrica.name%>: <%=Math.round(metrica.results) + "%" %></p>
                   <% }) %>
                   </div>
-                  
-                  <form action="/success" method="POST" id='form-csv-<%=horario.id%>'>
-                    <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
-                    <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
-                    <div class="upload">
-                      <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.id%>" value="<%= horario.name %>">Download</button>
-                    </div>
-                  </form>
+                  <div class="btn-group" role="group" aria-label="Basic example">
+                    <form action="/successcsv" method="POST" id='form-csv-<%=horario.id%>'>
+                      <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
+                      <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
+                      <div class="upload">
+                        <button type="submit" class="btn btn-primary upload-btn" id="download-csv-<%=horario.id%>" value="<%= horario.name %>">Download CSV</button>
+                      </div>
+                    </form>
+                    <form action="/successxml" method="POST" id='form-xml-<%=horario.id%>'>
+                      <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
+                      <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
+                      <div class="upload">
+                        <button type="submit" class="btn btn-primary upload-btn" id="download-xml-<%=horario.id%>" value="<%= horario.name %>">Download XML</button>
+                      </div>
+                    </form>
+                    <form action="/successjson" method="POST" id='form-json-<%=horario.id%>'>
+                      <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
+                      <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
+                      <div class="upload">
+                        <button type="submit" class="btn btn-primary upload-btn" id="download-JSON-<%=horario.id%>" value="<%= horario.name %>">Download JSON</button>
+                      </div>
+                    </form>
+                    </form>
+                    <form action="/tabulator" method="POST" id='form-html-<%=horario.id%>'>
+                      <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
+                      <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">
+                      <div class="upload">
+                        <button type="submit" class="btn btn-primary upload-btn" id="view_in_browser-<%=horario.id%>" value="<%= horario.name %>">View in browser</button>
+                      </div>
+                    </form>
+                  </div>
                   <script>
                     document.getElementById("form-csv-<%=horario.id%>").addEventListener("submit", function(){});
                   </script>

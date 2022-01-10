@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+ <html>
+    <head>
+        <%- include('./partials/header.ejs') %>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/styles_success.css">
+        <link href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+        <script type="text/javascript" src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+
+    </head>
+
+    <body>
+        <div id="horario"></div>
+        
+    
+    <script>var tabledata = [
+
+        <% horario.lectures.forEach(lecture => { %>
+            {"Curso":"<%= lecture.Curso %>",
+            "Unidade de execução":"<%= lecture["Unidade de execução"] %>",
+            "Turno":"<%= lecture.Turno %>", "Turma":"<%= lecture.Turma %>",
+            "Inscritos no turno (no 1º semestre é baseado em estimativas)":"<%= lecture["Inscritos no turno (no 1º semestre é baseado em estimativas)"] %>",
+            "Turnos com capacidade superior à capacidade das características das salas":"<%= lecture["Turnos com capacidade superior à capacidade das características das salas"] %>",
+            "Turno com inscrições superiores à capacidade das salas":"<%= lecture["Turno com inscrições superiores à capacidade das salas"] %>",
+            "Dia da Semana":"<%= lecture["Dia da Semana"] %>", 
+            "Início":"<%= lecture.Início %>",
+            "Fim":"<%= lecture.Fim %>",
+            "Caracteristicas da sala pedida para a aula":"<%= lecture["Características da sala pedida para a aula"] %>",
+            "Sala da aula":"<%= lecture["Sala da aula"] %>",
+            "Lotação":"<%= lecture.Lotação %>",
+            "Características reais da sala":"<%= lecture["Características reais da sala"] %>"
+            },
+        <% }) %>
+    ];
+    
+    //initialize table
+    var table = new Tabulator("#horario", {
+        data:tabledata, //assign data to table
+        autoColumns:true, //create columns from data field names
+    });
+    </script>
+    </body>
+ </html>
