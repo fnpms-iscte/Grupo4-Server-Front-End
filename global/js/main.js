@@ -31,17 +31,6 @@ socket.on('user_headers', headers =>{
 
 uploadFiles.addEventListener("submit", submitForm);
 
-function json_to_csv(horario) {
-	const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-	const header = Object.keys(horario[0])
-	const csv = [
-		header.join(';'), // header row first
-		...horario.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(';'))
-	].join('\r\n')
-
-
-	return csv
-}
 function submitForm(e) {
     e.preventDefault();
     const fileRoom = document.getElementById("formFileRoom");

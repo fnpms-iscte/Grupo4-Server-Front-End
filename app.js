@@ -1,21 +1,17 @@
 const http = require('http');
 const csvjson = require('csvjson');
-const bodyParser = require('body-parser')
-const socketio =  require('socket.io');
+const socketio = require('socket.io');
 const express = require('express');
 const siofu = require("socketio-file-upload");
 const fs = require('fs');
-const path = require('path');
+const { Tabulator } = require('tabulator-tables');
+const xmlParser = require('xml-js')
 const { JSDOM } = require( "jsdom" );
 const { window } = new JSDOM( "" );
 const jQuery = require( "jquery" )( window );
 async function initialize_d3(){
   return await import("d3");
 }
-
-const { Tabulator } = require('tabulator-tables');
-const xmlParser = require('xml-js')
-
 var multer = require('multer');
 var storage = multer.diskStorage({
     destination: 'uploads/',
@@ -34,27 +30,20 @@ let old_id;
 const app = express();
 const server = http.createServer(app)
 const io = socketio(server);
-const PORT =  process.env.PORT || 3000
+const PORT = process.env.PORT || 3000
 app.use(siofu.router)
 app.use(express.static('global'));
 app.use(express.json());
 app.set('view engine', 'ejs');
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 var socket;
-app.use(express.urlencoded({ 
-  extended: true
+app.use(express.urlencoded({
+	extended: true
 }))
 
 // Run when client connects
 io.on('connection', socket => {
   this.socket = socket;
-  //console.log(this.socket)
-  var uploader = new siofu();
-  uploader.dir = "./uploads";
-  uploader.listen(socket);
-  
-  socket.emit('welcome','Welcome to ISCTE');
-
 	var uploader = new siofu();
 	uploader.chunkSize = 100 * 1024 * 1024;
 	uploader.dir = "./uploads";
@@ -67,9 +56,9 @@ io.on('connection', socket => {
 
 			socket.emit('old-user-id', this.old_id)
 		}
-		users.push({ id: socket.id, files: {} })
+		users.push({id : socket.id, files : {}, room_headers : [], lecture_headers : [], client_csv : []})
 
-		console.log("\nNew User registed with id:", socket.id, "\nUsers:", users.length)
+		// console.log("\nNew User registed with id:", socket.id, "\nUsers:", users.length)
 		socket.emit('user-id', socket.id)
 	})
 
@@ -94,36 +83,59 @@ io.on('connection', socket => {
 		if (event.file.name == (socket.id + "_lectures.csv")) {
 			let csv_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.csv', { encoding: "utf8" });
 			let csv_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.csv', { encoding: "utf8" });
-			var json_aux = csv_to_json(csv_content1, csv_content2);
-			console.log(typeof(json_aux))
-			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
-			fs.unlinkSync('./uploads/' + socket.id + '_rooms.csv')
-			fs.unlinkSync('./uploads/' + socket.id + '_lectures.csv')
+      var user_room_headers = get_headers(csv_content1);
+      var user_lecture_headers = get_headers(csv_content2);
+      var index = users.findIndex(function(user, i){
+        return user.id === socket.id
+     });
+      users[index].room_headers = user_room_headers;
+      users[index].lecture_headers = user_lecture_headers;
+      users[index].client_csv = [csv_content1, csv_content2]; 
+      socket.emit("user_headers",{ headers: user_room_headers, default_headers : default_room_headers})
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms.csv')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures.csv')
 		}
 		if (event.file.name == (socket.id + "_lectures.json")) {
 			let json_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.json', { encoding: "utf8" });
 			let json_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.json', { encoding: "utf8" });
-			var json_aux = json_to_jsonObj(json_content1, json_content2);
-			console.log(typeof(json_aux))
-			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
-			fs.unlinkSync('./uploads/' + socket.id + '_rooms.json')
-			fs.unlinkSync('./uploads/' + socket.id + '_lectures.json')
+      let json_obj1 = json_to_jsonObj(json_content1);
+      let json_obj2 = json_to_jsonObj(json_content2);
+      let csv_content1 = json_to_csv(json_obj1);
+      let csv_content2 = json_to_csv(json_obj2);
+			var user_room_headers = get_headers(csv_content1);
+      var user_lecture_headers = get_headers(csv_content2);
+      var index = users.findIndex(function(user, i){
+        return user.id === socket.id
+     });
+      users[index].room_headers = user_room_headers;
+      users[index].lecture_headers = user_lecture_headers;
+      users[index].client_csv = [csv_content1, csv_content2]; 
+      socket.emit("user_headers",{ headers: user_room_headers, default_headers : default_room_headers})
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms.json')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures.json')
 		}
 		if (event.file.name == (socket.id + "_lectures.xml")) {
 			let xml_content1 = fs.readFileSync('./uploads/' + socket.id + '_rooms.xml', { encoding: "utf8" });
 			let xml_content2 = fs.readFileSync('./uploads/' + socket.id + '_lectures.xml', { encoding: "utf8" });
-			var json_aux = xml_to_json(xml_content1, xml_content2);
-			console.log(json_aux)
-			socket.to(workers[0]).emit('files_to_handle', { files: json_aux, id: socket.id });
-			fs.unlinkSync('./uploads/' + socket.id + '_rooms.xml')
-			fs.unlinkSync('./uploads/' + socket.id + '_lectures.xml')
+      // Nao foi possivel encontrar conversor de XML para CSV complexo o suficiente para o tratamento dos dados
+			var user_room_headers = get_headers(xml_content1);
+      var user_lecture_headers = get_headers(xml_content2);
+      var index = users.findIndex(function(user, i){
+        return user.id === socket.id
+     });
+      users[index].room_headers = user_room_headers;
+      users[index].lecture_headers = user_lecture_headers;
+      users[index].client_csv = [csv_content1, csv_content2]; 
+      socket.emit("user_headers",{ headers: user_room_headers, default_headers : default_room_headers})
+      fs.unlinkSync('./uploads/'+socket.id+'_rooms.xml')
+      fs.unlinkSync('./uploads/'+socket.id+'_lectures.xml')
 		}
 
 	});
 
 	socket.on('results', body => {
-		// console.log(body)
-		var id = JSON.parse(body).id
+    //var id = JSON.parse(body).id
+		var id = this.old_id
 
 		var index = users.findIndex(function (user, i) {
 			return user.id === id
@@ -147,7 +159,6 @@ io.on('connection', socket => {
 			const index = workers.indexOf(socket.id);
 			if (index > -1) {
 				workers.splice(index, 1);
-				console.log("\nWorker with id", socket.id, "disconnected \nWorkers:", workers.length)
 
 			}
 		}
@@ -158,7 +169,7 @@ app.get('/', (req, res) => {
 	res.render('index', { title: '' });
 });
 
-app.get('/success', (req, res) => {
+app.get('/success', async (req, res) => {
 
 	this.old_id = req.query.oldid;
 
@@ -166,7 +177,13 @@ app.get('/success', (req, res) => {
 	var index = users.findIndex(function (user, i) {
 		return user.id === id
 	});
-
+  console.log(jQuery.isEmptyObject(users[index].files));
+  while(jQuery.isEmptyObject(users[index].files)){
+    console.log("sleeping")
+    console.log(index)
+    console.log(users[index].files)
+    await sleep(1000);
+  }
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
 })
 
@@ -177,7 +194,8 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 		console.log("Vou processar: " + picture.filename)
 		var aux = picture.filename.split("_")
 		var timetable_name = aux[aux.length-1].split(".")[0]
-		var id = picture.filename.substring(0,picture.filename.length-5-timetable_name.length)
+		// var id = picture.filename.substring(0,picture.filename.length-5-timetable_name.length)
+    var id = this.old_id
 		console.log("id: " + id)
 		console.log("Horario: " + timetable_name)
 
@@ -185,8 +203,8 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 			return user.id === id
 		});
 		console.log("Index: " + index)
+    console.log(users[index])
 		users[index].files.forEach(horario => {
-
 			if (horario.name == timetable_name) {
 				//convert json to csv
 				console.log("Vou carregar...")
@@ -262,28 +280,6 @@ app.post('/successxml', (req, res) => {
 	res.attachment('horario.xml').send(xml)
 });
 
-app.get('/dataprocessing_lectures', (req,res) =>{
-  this.old_id = req.query.oldid;
-  var id = this.old_id
-  console.log(id);
-  var index = users.findIndex(function(user, i){
-    return user.id === id
-  });
-  console.log("Render data processing")
-  res.render('dataprocessing_lectures', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].lecture_headers, default_headers: default_lecture_headers} );
-})
-
-app.get('/dataprocessing_rooms', (req,res) =>{
-  this.old_id = req.query.oldid;
-  var id = this.old_id
-  var index = users.findIndex(function(user, i){
-    return user.id === id
-  });
-  console.log("Render data processing")
-  res.render('dataprocessing_rooms', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].room_headers, default_headers: default_room_headers} );
-})
-
-app.get('/success', async (req,res) => {
 app.post('/successjson', (req, res) => {
 
 	old_id = req.body.old_id
@@ -298,15 +294,6 @@ app.post('/successjson', (req, res) => {
 
 	users[index].files.forEach(horario => {
 
-  console.log(jQuery.isEmptyObject(users[index].files));
-  while(jQuery.isEmptyObject(users[index].files)){
-    console.log("sleeping")
-    console.log(index)
-    console.log(users[index].files)
-    await sleep(1000);
-  }
-  res.render('success', { title: 'Resultados do Horário' , old_id : this.old_id , horarios : users[index].files } );
-})
 		if (horario.name == timetable_name) {
 			//convert json to json file
 
@@ -339,6 +326,27 @@ app.post('/tabulator', (req, res) => {
     })
     
 });
+
+app.get('/dataprocessing_lectures', (req,res) =>{
+  this.old_id = req.query.oldid;
+  var id = this.old_id
+  console.log(id);
+  var index = users.findIndex(function(user, i){
+    return user.id === id
+  });
+  console.log("Render data processing")
+  res.render('dataprocessing_lectures', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].lecture_headers, default_headers: default_lecture_headers} );
+})
+
+app.get('/dataprocessing_rooms', (req,res) =>{
+  this.old_id = req.query.oldid;
+  var id = this.old_id
+  var index = users.findIndex(function(user, i){
+    return user.id === id
+  });
+  console.log("Render data processing")
+  res.render('dataprocessing_rooms', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].room_headers, default_headers: default_room_headers} );
+})
 
 app.post('/dataprocessing_lectures', async (req,res) =>{
   console.log(req.body)
@@ -543,14 +551,12 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
   }
 })
 
-app.post('/',  (req,res) => {
+app.post('/', (req, res) => {
 
-  this.old_id = req.body.id
-  console.log("post");
-  var string = encodeURIComponent(this.old_id);
-  console.log("redirecting")
-  res.redirect('/dataprocessing_rooms?oldid=' + string);
-  //res.redirect(302,'/success', {id: old_id} )
+	this.old_id = req.body.id
+
+	var string = encodeURIComponent(this.old_id);
+	res.redirect('/dataprocessing_rooms?oldid=' + string);
 
 });
 
@@ -562,31 +568,21 @@ function csv_to_json(fileContent1,fileContent2) {
 	var options = {
 		delimiter: ';'
 
-  };
-  let jsonObj1 = csvjson.toObject(fileContent1,options);
-  let jsonObj2 = csvjson.toObject(fileContent2,options);
-  //console.log(jsonObj1)
-  return [jsonObj1,jsonObj2];
-}
-
-function json_to_jsonObj(fileContent1,fileContent2) {
-	let jsonObj1 = JSON.parse(fileContent1);
-	let jsonObj2 = JSON.parse(fileContent2);
+	};
+	let jsonObj1 = csvjson.toObject(fileContent1, options);
+	let jsonObj2 = csvjson.toObject(fileContent2, options);
 	;
 
 	return [jsonObj1,jsonObj2];
 }
 
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function json_to_jsonObj(fileContent) {
+	let jsonObj = JSON.parse(fileContent);
+	;
+
+	return jsonObj;
 }
 
-function get_headers(fileContent1, fileContent2){
-
-  var allTextLines = fileContent1.split(/\r\n|\n/);
-  var headers = allTextLines[0].split(';');
-  return headers;
-}
 function xml_to_json(fileContent1,fileContent2) {
 	let jsonObj1 = JSON.parse(xmlParser.xml2json(fileContent1));
 	let jsonObj2 = JSON.parse(xmlParser.xml2json(fileContent2));
@@ -646,3 +642,15 @@ function jsonobj_to_jsonfile(horario) {
 	return file
 
 }
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function get_headers(fileContent1, fileContent2){
+
+  var allTextLines = fileContent1.split(/\r\n|\n/);
+  var headers = allTextLines[0].split(';');
+  return headers;
+}
+
