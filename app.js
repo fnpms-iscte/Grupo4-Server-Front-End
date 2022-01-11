@@ -45,7 +45,7 @@ app.use(express.urlencoded({
 io.on('connection', socket => {
   this.socket = socket;
 	var uploader = new siofu();
-	uploader.chunkSize = 100 * 1024 * 1024;
+	uploader.chunkSize = 100 * 1024;
 	uploader.dir = "./uploads";
 	uploader.listen(socket);
 

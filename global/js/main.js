@@ -1,7 +1,7 @@
 const socket = io();
 const uploadFiles = document.getElementById("uploadFiles-form");
 var uploader = new SocketIOFileUpload(socket);
-uploader.chunkSize = 100 * 1024 * 1024;
+uploader.chunkSize = 1024 * 100;
 let id
 
 socket.on('welcome', message=>{
@@ -55,7 +55,7 @@ function submitForm(e) {
         file_rooms,
         file_lectures
     ]   
-    uploader.submitFiles(files_array);    
+    uploader.submitFiles(files_array);
     console.log("files sent");
 }                                                                                                       
 

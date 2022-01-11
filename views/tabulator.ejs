@@ -37,6 +37,8 @@
     //initialize table
     var table = new Tabulator("#horario", {
         data:tabledata, //assign data to table
+		pagination:"local",       //paginate the data
+		paginationSize:20,
         autoColumns:true, //create columns from data field names
     });
     </script>
