@@ -4,6 +4,7 @@ const socketio = require('socket.io');
 const express = require('express');
 const siofu = require("socketio-file-upload");
 const fs = require('fs');
+const urldecodeLatin1 = require('urldecode-latin1')
 const { Tabulator } = require('tabulator-tables');
 const xmlParser = require('xml-js')
 const { JSDOM } = require( "jsdom" );
@@ -177,11 +178,8 @@ app.get('/success', async (req, res) => {
 	var index = users.findIndex(function (user, i) {
 		return user.id === id
 	});
-  console.log(jQuery.isEmptyObject(users[index].files));
   while(jQuery.isEmptyObject(users[index].files)){
     console.log("sleeping")
-    console.log(index)
-    console.log(users[index].files)
     await sleep(1000);
   }
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
@@ -203,12 +201,11 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 			return user.id === id
 		});
 		console.log("Index: " + index)
-    console.log(users[index])
 		users[index].files.forEach(horario => {
 			if (horario.name == timetable_name) {
-				//convert json to csv
+				//convert csv to json
 				console.log("Vou carregar...")
-				fs.readFile(picture.path, 'utf8' , (err, data) => {
+				fs.readFile(picture.path, 'latin1' , (err, data) => {
 					console.log(id)
 					console.log(timetable_name)
 					horario.lectures = treatedcsv_to_json(data)[0]
@@ -247,7 +244,7 @@ app.post('/successcsv', (req, res) => {
 		if (horario.name == timetable_name) {
 			//convert json to csv
 			csv =json_to_csv(horario.lectures)
-
+      console.log(csv)
 		}
 
 	})
@@ -349,7 +346,6 @@ app.get('/dataprocessing_rooms', (req,res) =>{
 })
 
 app.post('/dataprocessing_lectures', async (req,res) =>{
-  console.log(req.body)
   console.log("Post do data processing");
   d3 = await initialize_d3();
   //console.log(req.body);
@@ -432,9 +428,7 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
     var arrObj = [];
     var lines = users[index].client_csv[1].split('\n');
     var headers = lines[0].split(';');
-    console.log(users[index].client_csv[1])
     const data = d3.dsvFormat(";").parse(users[index].client_csv[1]);
-    console.log(data.columns)
     for(let i = 0 ; i < total_length; i++ ){
       for (var key2 in req.body) {
         if (req.body.hasOwnProperty(key2)) {
@@ -453,7 +447,6 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
     //console.log(data.columns);
     lines[0] = data.columns.join(';');
     users[index].client_csv[1] = lines.join('\n');
-    console.log(users[index].client_csv[1])
     console.log("redirecting")
     console.log("post");
     var string = encodeURIComponent(id);
@@ -504,11 +497,6 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
         }
     }
   }
-  console.log("Buildings: ", count_buildings)
-  console.log("Room name: ", count_room_names)
-  console.log("Normal capacity: ", count_normal_capacity)
-  console.log("Exam capacity: ", count_exam_capacity)
-  console.log("count exam capacity: ", count_characteristics)
   if(count_buildings != 1 || count_room_names != 1 || count_normal_capacity != 1 || count_exam_capacity != 1 || count_characteristics < 1){
     console.log("ERRO");
   }else {
@@ -522,9 +510,7 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
     var arrObj = [];
     var lines = users[index].client_csv[0].split('\n');
     var headers = lines[0].split(';');
-    console.log(users[index].client_csv[0])
     const data = d3.dsvFormat(";").parse(users[index].client_csv[0]);
-    console.log(data.columns)
     for(let i = 0 ; i < total_length; i++ ){
       for (var key2 in req.body) {
         if (req.body.hasOwnProperty(key2)) {
@@ -543,7 +529,6 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
     //console.log(data.columns);
     lines[0] = data.columns.join(';');
     users[index].client_csv[0] = lines.join('\n');
-    console.log(users[index].client_csv[0])
     console.log("redirecting")
     console.log("post");
     var string = encodeURIComponent(id);
@@ -609,7 +594,6 @@ function json_to_csv(horario) {
 		header.join(';'), // header row first
 		...horario.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(';'))
 	].join('\r\n')
-
 
 	return csv
 }
