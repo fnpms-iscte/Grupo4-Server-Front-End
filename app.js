@@ -244,7 +244,6 @@ app.post('/successcsv', (req, res) => {
 		if (horario.name == timetable_name) {
 			//convert json to csv
 			csv =json_to_csv(horario.lectures)
-      console.log(csv)
 		}
 
 	})
