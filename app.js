@@ -177,9 +177,11 @@ app.get('/success', async (req, res) => {
 	var index = users.findIndex(function (user, i) {
 		return user.id === id
 	});
+  console.log("Waiting results ...")
   while(jQuery.isEmptyObject(users[index].files)){
     await sleep(1000);
   }
+  console.log("Results received ...")
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
 })
 
