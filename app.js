@@ -59,7 +59,7 @@ io.on('connection', socket => {
 		}
 		users.push({id : socket.id, files : {}, room_headers : [], lecture_headers : [], client_csv : []})
 
-		// console.log("\nNew User registed with id:", socket.id, "\nUsers:", users.length)
+		console.log("\nNew User registed with id:", socket.id, "\nUsers:", users.length)
 		socket.emit('user-id', socket.id)
 	})
 
@@ -154,8 +154,7 @@ io.on('connection', socket => {
 		});
 
 		if (index > -1) {
-			//users.splice(index, 1);
-			//console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
+			console.log("\nUser with id",socket.id, "disconnected \nUsers:",users.length)
 		} else {
 			const index = workers.indexOf(socket.id);
 			if (index > -1) {
@@ -207,19 +206,13 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 
 	console.log("Done!")
     res.send("Done!")
-	// req.files.forEach(function (item, index){
-	// 	console.log("file: " + item[1])
-	// })
 });
 
 app.post('/successcsv', (req, res) => {
-console.log(this.old_id)
-  //old_id = req.body.old_id
 	var timetable_name = req.body.name
 
 	
     var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
-    console.log(path)
     res.download(path)
 });
 
@@ -336,7 +329,6 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
   }else {
     var total_length = count_course + count_execution_unity + count_shift + count_class + count_shift_enrolment + count_shift_superior_capacity 
     + count_shift_superior_registrations + count_week_day + count_start + count_end + count_day + count_characteristics
-    console.log(req.body.old_id)
     var id = req.body.old_id
     var index = users.findIndex(function(user, i){
       return user.id === id
@@ -368,7 +360,6 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
 app.post('/dataprocessing_rooms', async (req,res) =>{
   console.log("Post do data processing dos rooms");
   d3 = await initialize_d3();
-  //console.log(req.body);
   req.body = JSON.parse(JSON.stringify(req.body));
   let count_buildings = 0
   let count_room_names = 0 
@@ -404,7 +395,6 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
     console.log("ERRO");
   }else {
     var total_length = count_buildings + count_room_names + count_normal_capacity + count_exam_capacity + count_characteristics
-    console.log(req.body.old_id)
     var id = req.body.old_id
     var index = users.findIndex(function(user, i){
       return user.id === id
