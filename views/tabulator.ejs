@@ -16,7 +16,7 @@
     
     <script>var tabledata = [
 
-        <% horario.lectures.forEach(lecture => { %>
+        <% horario.lectures[0].forEach(lecture => { %>
             {"Curso":"<%= lecture.Curso %>",
             "Unidade de execução":"<%= lecture["Unidade de execução"] %>",
             "Turno":"<%= lecture.Turno %>", "Turma":"<%= lecture.Turma %>",

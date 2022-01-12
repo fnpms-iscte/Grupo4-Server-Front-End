@@ -244,7 +244,6 @@ app.post('/tabulator', (req, res) => {
   let timetable_name = req.body.name
   var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
   let horario = {lectures : treatedcsv_to_json(fs.readFileSync(path, { encoding: "latin1" })) }
-	
   res.render('tabulator', { title: 'Horario', old_id: this.old_id, horario});
     
 });
