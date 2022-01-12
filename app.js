@@ -201,20 +201,7 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 			return user.id === id
 		});
 		console.log("Index: " + index)
-		users[index].files.forEach(horario => {
-			if (horario.name == timetable_name) {
-				//convert csv to json
-				console.log("Vou carregar...")
-				fs.readFile(picture.path, 'latin1' , (err, data) => {
-					console.log(id)
-					console.log(timetable_name)
-					horario.lectures = treatedcsv_to_json(data)[0]
-				  })
-          fs.unlink(picture.path, (err) => {}); 
-				
-			}
 	
-		})
 
 
 	})
@@ -227,98 +214,38 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 });
 
 app.post('/successcsv', (req, res) => {
+console.log(this.old_id)
+  //old_id = req.body.old_id
+	var timetable_name = req.body.name
 
-	old_id = req.body.old_id
-	timetable_name = req.body.name
-
-	var id = old_id
-	var index = users.findIndex(function (user, i) {
-		return user.id === id
-	});
-
-	let csv
-
-	users[index].files.forEach(horario => {
-
-		if (horario.name == timetable_name) {
-			//convert json to csv
-			csv =json_to_csv(horario.lectures)
-		}
-
-	})
-	res.attachment('horario.csv').send(csv)
+	
+    var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
+    console.log(path)
+    res.download(path)
 });
 
 app.post('/successxml', (req, res) => {
-
-	old_id = req.body.old_id
-	timetable_name = req.body.name
-
-	var id = old_id
-	var index = users.findIndex(function (user, i) {
-		return user.id === id
-	});
-
-	let xml
-
-	users[index].files.forEach(horario => {
-
-		if (horario.name == timetable_name) {
-			//convert json to xml
-
-			xml = json_to_xml(horario.lectures)
-
-		}
-
-	})
+ 
+	let timetable_name = req.body.name
+  var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
+	let xml = json_to_xml(treatedcsv_to_json(fs.readFileSync(path, { encoding: "latin1" })))
 
 	res.attachment('horario.xml').send(xml)
 });
 
 app.post('/successjson', (req, res) => {
+  let timetable_name = req.body.name
+  var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
 
-	old_id = req.body.old_id
-	timetable_name = req.body.name
-
-	var id = old_id
-	var index = users.findIndex(function (user, i) {
-		return user.id === id
-	});
-
-	let json
-
-	users[index].files.forEach(horario => {
-
-		if (horario.name == timetable_name) {
-			//convert json to json file
-
-			json = jsonobj_to_jsonfile(horario.lectures)
-
-		}
-
-	})
-
-
-	res.attachment('horario.json').send(json)
+	res.attachment('horario.json').send(treatedcsv_to_json(fs.readFileSync(path, { encoding: "latin1" })))
 });
 
 app.post('/tabulator', (req, res) => {
-
-	old_id = req.body.old_id
-	timetable_name = req.body.name
-
-	var id = old_id
-	var index = users.findIndex(function (user, i) {
-		return user.id === id
-	});
-
-	users[index].files.forEach(horario => {
-
-		if (horario.name == timetable_name) {
-		res.render('tabulator', { title: 'Horario', old_id: this.old_id, horario});
-	}
-
-    })
+  let timetable_name = req.body.name
+  var path = './uploads/'+this.old_id+'_'+timetable_name+'.csv'
+  let horario = {lectures : treatedcsv_to_json(fs.readFileSync(path, { encoding: "latin1" })) }
+	
+  res.render('tabulator', { title: 'Horario', old_id: this.old_id, horario});
     
 });
 
@@ -450,7 +377,7 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
     var string = encodeURIComponent(id);
     var json_aux = csv_to_json(users[index].client_csv[0],users[index].client_csv[1]);
     //console.log(this.socket)
-    this.socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: this.socket.id});
+    this.socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: this.old_id});
     res.redirect('/success?oldid=' + string);
   }
 })
