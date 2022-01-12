@@ -179,7 +179,6 @@ app.get('/success', async (req, res) => {
 		return user.id === id
 	});
   while(jQuery.isEmptyObject(users[index].files)){
-    console.log("sleeping")
     await sleep(1000);
   }
 	res.render('success', { title: 'Resultados do Horário', old_id: this.old_id, horarios: users[index].files });
@@ -251,12 +250,11 @@ app.post('/tabulator', (req, res) => {
 app.get('/dataprocessing_lectures', (req,res) =>{
   this.old_id = req.query.oldid;
   var id = this.old_id
-  console.log(id);
   var index = users.findIndex(function(user, i){
     return user.id === id
   });
-  console.log("Render data processing")
-  res.render('dataprocessing_lectures', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].lecture_headers, default_headers: default_lecture_headers} );
+  console.log("Render data processing lectures")
+  res.render('dataprocessing_lectures', { title: 'Data Processing Lectures' , old_id : this.old_id , headers : users[index].lecture_headers, default_headers: default_lecture_headers} );
 })
 
 app.get('/dataprocessing_rooms', (req,res) =>{
@@ -265,14 +263,13 @@ app.get('/dataprocessing_rooms', (req,res) =>{
   var index = users.findIndex(function(user, i){
     return user.id === id
   });
-  console.log("Render data processing")
-  res.render('dataprocessing_rooms', { title: 'Resultados do Horário' , old_id : this.old_id , headers : users[index].room_headers, default_headers: default_room_headers} );
+  console.log("Render data processing rooms")
+  res.render('dataprocessing_rooms', { title: 'Data Processing Rooms' , old_id : this.old_id , headers : users[index].room_headers, default_headers: default_room_headers} );
 })
 
 app.post('/dataprocessing_lectures', async (req,res) =>{
-  console.log("Post do data processing");
+  console.log("Post do data processing das lectures");
   d3 = await initialize_d3();
-  //console.log(req.body);
   req.body = JSON.parse(JSON.stringify(req.body));
   let count_course = 0;
   let count_execution_unity = 0; 
@@ -294,15 +291,12 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
               count_course++;
               break;
             case "1":
-              console.log('Room name');
               count_execution_unity++;
               break;
             case "2":
-              console.log('Normal Capacity');
               count_shift++;
               break;
             case "3":
-              console.log('Exam capacity');
               count_class++;
               break;
             case "4":
@@ -330,9 +324,8 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
               count_characteristics++;
               break;
             default:
-              console.log('lol');
+              console.log('');
           }
-          //console.log(key + " -> " + req.body[key]);
         }
     }
   }
@@ -349,40 +342,31 @@ app.post('/dataprocessing_lectures', async (req,res) =>{
       return user.id === id
     });
 
-    var arrObj = [];
     var lines = users[index].client_csv[1].split('\n');
-    var headers = lines[0].split(';');
     const data = d3.dsvFormat(";").parse(users[index].client_csv[1]);
     for(let i = 0 ; i < total_length; i++ ){
       for (var key2 in req.body) {
         if (req.body.hasOwnProperty(key2)) {
-          //console.log(typeof req.body[key2])
           if( -1 < req.body[key2] && req.body[key2] < 12){
-            //console.log(key2 + " -> " + req.body[key2]);
-            //console.log(data.columns[i])
             if(key2 == data.columns[i]){
-              console.log("ALTEREI");
               data.columns[i] = default_lecture_headers[req.body[key2]]
             }
           }
         }
       }
     }
-    //console.log(data.columns);
     lines[0] = data.columns.join(';');
     users[index].client_csv[1] = lines.join('\n');
     console.log("redirecting")
-    console.log("post");
     var string = encodeURIComponent(id);
     var json_aux = csv_to_json(users[index].client_csv[0],users[index].client_csv[1]);
-    //console.log(this.socket)
     this.socket.to(workers[0]).emit('files_to_handle',{files : json_aux, id: this.old_id});
     res.redirect('/success?oldid=' + string);
   }
 })
 
 app.post('/dataprocessing_rooms', async (req,res) =>{
-  console.log("Post do data processing");
+  console.log("Post do data processing dos rooms");
   d3 = await initialize_d3();
   //console.log(req.body);
   req.body = JSON.parse(JSON.stringify(req.body));
@@ -396,28 +380,23 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
         if( -1 < req.body[key] && req.body[key] < 5){
           switch(req.body[key]){
             case "0":
-              console.log('Building');
               count_buildings++;
               break;
             case "1":
-              console.log('Room name');
               count_room_names++;
               break;
             case "2":
-              console.log('Normal Capacity');
               count_normal_capacity++;
               break;
             case "3":
-              console.log('Exam capacity');
               count_exam_capacity++;
               break;
             case "4":
               count_characteristics++;
               break;
             default:
-              console.log('lol');
+              console.log("")
           }
-          //console.log(key + " -> " + req.body[key]);
         }
     }
   }
@@ -431,30 +410,22 @@ app.post('/dataprocessing_rooms', async (req,res) =>{
       return user.id === id
     });
 
-    var arrObj = [];
     var lines = users[index].client_csv[0].split('\n');
-    var headers = lines[0].split(';');
     const data = d3.dsvFormat(";").parse(users[index].client_csv[0]);
     for(let i = 0 ; i < total_length; i++ ){
       for (var key2 in req.body) {
         if (req.body.hasOwnProperty(key2)) {
-          //console.log(typeof req.body[key2])
           if( -1 < req.body[key2] && req.body[key2] < 5){
-            //console.log(key2 + " -> " + req.body[key2]);
-            //console.log(data.columns[i])
             if(key2 == data.columns[i]){
-              console.log("ALTEREI");
               data.columns[i] = default_room_headers[req.body[key2]]
             }
           }
         }
       }
     }
-    //console.log(data.columns);
     lines[0] = data.columns.join(';');
     users[index].client_csv[0] = lines.join('\n');
     console.log("redirecting")
-    console.log("post");
     var string = encodeURIComponent(id);
     res.redirect('/dataprocessing_lectures?oldid=' + string);
   }
