@@ -210,9 +210,8 @@ app.post('/csv-files', upload.array('file'), (req, res, next) => {
 					console.log(timetable_name)
 					horario.lectures = treatedcsv_to_json(data)[0]
 				  })
-				fs.unlink(picture.path, (err) => {
-				  
-				})
+          fs.unlink(picture.path, (err) => {}); 
+				
 			}
 	
 		})

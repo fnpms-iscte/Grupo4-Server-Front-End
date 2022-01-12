@@ -28,15 +28,15 @@
                 <% horarios.forEach(horario => { %>
                 <div class="tab-pane fade" id="<%= horario.id %>" role="tabpanel" aria-labelledby="<%= horario.id %>-list">
                   <div class="header-wrapper2">
-                    <h2><label class="form-label"><%= horario.best_metric %></label></h2>
+                    <h4><label class="form-label"><%= horario.best_metric %></label></h4>
                   </div>
                   <div class="body-wrapper2">
-                    <h3><label class="form-label">Detalhes:</label></h3>
+                    <h5><label class="form-label">Detalhes:</label></h5>
                   <% horario.metrics.forEach(metrica => { %>
                     <p><%=metrica.name%>: <%=Math.round(metrica.results) + "%" %></p>
                   <% }) %>
                   </div>
-                  <div class="btn-group" role="group" aria-label="Basic example">
+                  <div class="btn-group download-btns" role="group" aria-label="Basic example">
                     <form action="/successcsv" method="POST" id='form-csv-<%=horario.id%>'>
                       <input type ="text" name= "old_id" id = "old_id-<%=horario.id%>" hidden value="<%= old_id %>">
                       <input type ="text" name= "name" id = "name-<%=horario.id%>" hidden value="<%= horario.name %>">

@@ -23,7 +23,7 @@ body {
     flex: 0 0 auto;
     width: 33.33333333%;
     border-radius: 25px;
-    margin-top: -138px;
+    margin-top: 0%;
     margin-left: -14%;
     margin-right: 10%;
 }
@@ -95,4 +95,10 @@ p{
     margin-bottom: 0rem!important;
 }
 
+.download-btns{
+    margin-left: -22%;
+}
 
+.header-wrapper2{
+    margin-top: 91px;
+}
